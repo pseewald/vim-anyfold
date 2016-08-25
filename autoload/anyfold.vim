@@ -260,6 +260,7 @@ function! s:ToggleFolds()
    endif
 endfunction
 
+" FIXME: does not work for split windows
 function! s:ReloadBuffer()
     let l:winview = winsaveview()
     bdelete | edit # | normal zv

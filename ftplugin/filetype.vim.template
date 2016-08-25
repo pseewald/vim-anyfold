@@ -25,7 +25,7 @@ let s:comment_char = '<comment>'                 " <-- Character or string used 
                                                  " works as expected.
 
 "----------------------------------------------------------------------------/
-" Voluntary options
+" Voluntary and experimental options
 "----------------------------------------------------------------------------/
                                                  " The following options are voluntary
                                                  " and can be left empty.
@@ -33,11 +33,9 @@ let b:anyfold_docubox_mark = ''                  " <-- String that starts all li
                                                  "     docu boxes
                                                  "     (e.g. '!>' for Fortran + Doxygen)
 let b:anyfold_docubox_start = ''                 " <-- String that starts first line of a
-                                                 "     docu box
-                                                 "     (e.g. '"""' for Python)
+                                                 "     docu box (experimental)
 let b:anyfold_docubox_end = ''                   " <-- String that starts last line of a
-                                                 "     docu box
-                                                 "     (e.g. '"""' for Python)
+                                                 "     docu box (experimental)
 
 call anyfold#init(s:indent, s:comment_char)
 

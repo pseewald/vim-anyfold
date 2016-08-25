@@ -14,7 +14,4 @@ endif
 let s:indent = 4
 let s:comment_char = '#'
 
-let b:anyfold_docubox_start = '"""'
-let b:anyfold_docubox_end = '"""'
-
 call anyfold#init(s:indent, s:comment_char)

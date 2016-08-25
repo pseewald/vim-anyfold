@@ -98,7 +98,6 @@ autocmd Filetype <filetype> let <option>=<value>
 Option | Values | Default value |  Description
 ------ | -------------- | ------------- | ------------
 `anyfold_nindent` | integer | filetype specific | Indentation width
-`anyfold_docu_fold` | 0, 1 | 0 | Fold documentation boxes
 `anyfold_fold_display` | 0, 1 | 1 | Improved display of closed folds
 `anyfold_equalprg` | string | - | External executable for equalprg
 `anyfold_equalprg_args` | string | - | Arguments for external equalprg
@@ -106,7 +105,7 @@ Option | Values | Default value |  Description
 `anyfold_fold_motion` | 0, 1 | 1 | Map motion commands to `[[`, `]]`, `[j`, `]k`
 `anyfold_reload_key` | string | '\<F5\>' | Key to reload folds
 `anyfold_lang_settings` | 0, 1 |  1  | Use AnyFold's recommended filetype defaults
-
+`anyfold_docu_fold` | 0, 1 | 0 | Fold documentation boxes (experimental)
 
 ## Contributing
 
