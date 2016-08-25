@@ -99,8 +99,8 @@ Option | Values | Default value |  Description
 ------ | -------------- | ------------- | ------------
 `anyfold_nindent` | integer | filetype specific | Indentation width
 `anyfold_fold_display` | 0, 1 | 1 | Improved display of closed folds
-`anyfold_equalprg` | string | - | External executable for equalprg
-`anyfold_equalprg_args` | string | - | Arguments for external equalprg
+`anyfold_equalprg` | string | filetype specific | External executable for equalprg
+`anyfold_equalprg_args` | string | filetype specific | Arguments for external equalprg
 `anyfold_toggle_key` | string | '\<space\>' | Key to toggle folds recursively
 `anyfold_fold_motion` | 0, 1 | 1 | Map motion commands to `[[`, `]]`, `[j`, `]k`
 `anyfold_reload_key` | string | '\<F5\>' | Key to reload folds

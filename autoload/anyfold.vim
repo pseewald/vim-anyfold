@@ -3,14 +3,14 @@
 "----------------------------------------------------------------------------/
 " Activation of requested features
 "----------------------------------------------------------------------------/
-function anyfold#init(nindent, comment_char)
+function anyfold#init(nindent, comment_char, equalprg, equalprg_args)
 
     if !exists('g:_ANYFOLD_DEFAULTS')
         let g:_ANYFOLD_DEFAULTS = {
                     \ 'lang_settings':                      1,
                     \ 'nindent':                    a:nindent,
-                    \ 'equalprg':                          '',
-                    \ 'equalprg_args':                     '',
+                    \ 'equalprg':                  a:equalprg,
+                    \ 'equalprg_args':        a:equalprg_args,
                     \ 'docu_fold':                          0,
                     \ 'fold_display':                       1,
                     \ 'fold_motion':                        1,
