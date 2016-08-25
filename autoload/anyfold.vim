@@ -231,7 +231,7 @@ function! GetIndentFold(lnum)
 
     if b:anyfold_doculines[a:lnum]
         if g:anyfold_docu_fold
-            return &foldlevel+1
+            return b:anyfold_indent_list[a:lnum] + 1
         else
             return -1
         endif
