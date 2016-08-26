@@ -18,7 +18,7 @@ function anyfold#init(nindent, comment_char, equalprg, equalprg_args)
                     \ 'reload_key':                    '<F5>',
                     \ 'debug':                              0,
                     \ }
-       lockvar g:_ANYFOLD_DEFAULTS
+        lockvar! g:_ANYFOLD_DEFAULTS
     endif
 
     for s:key in keys(g:_ANYFOLD_DEFAULTS)
@@ -56,7 +56,7 @@ function anyfold#init(nindent, comment_char, equalprg, equalprg_args)
                     \' :call <SID>ToggleFolds()<cr>'
 
     exe 'noremap <script> <buffer> <silent>' g:anyfold_reload_key
-                    \' :call <SID>ReloadBuffer()<cr>'
+                    \' :call <SID>ReloadFolds()<cr>'
 
     if g:anyfold_fold_motion
         noremap <script> <buffer> <silent> ]]
@@ -260,11 +260,14 @@ function! s:ToggleFolds()
    endif
 endfunction
 
-" FIXME: does not work for split windows
-function! s:ReloadBuffer()
-    let l:winview = winsaveview()
-    bdelete | edit # | normal zv
-    call winrestview(l:winview)
+function! s:ReloadFolds()
+    unlockvar! b:anyfold_indent_list
+    let b:anyfold_indent_list = s:GetIndentList()
+    lockvar! b:anyfold_indent_list
+    unlockvar! b:anyfold_doculines
+    let b:anyfold_doculines = s:GetDocuBoxes()
+    lockvar! b:anyfold_doculines
+    setlocal foldexpr=GetIndentFold(v:lnum)
 endfunction
 
 function! s:echoLineIndent()
