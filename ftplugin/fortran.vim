@@ -15,7 +15,7 @@ let s:indent = 3
 let s:comment_char = '!'
 
 let s:equalprg = 'fprettify'
-let s:equalprg_args = '--no-normalize-use --no-replace --no-report-errors'
+let s:equalprg_args = '--no-report-errors'
 
 let b:anyfold_docubox_mark = '!>'
 let b:anyfold_docubox_start = ''
