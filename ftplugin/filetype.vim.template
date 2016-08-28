@@ -6,8 +6,6 @@ if exists("b:loaded_anyfold")
 endif
 let b:loaded_anyfold = 1
 
-setlocal filetype=<filetype>                     " <-- filetype (e.g. python)
-
 if !exists("g:anyfold_activate")
     finish
 elseif !g:anyfold_activate
@@ -23,7 +21,6 @@ let s:comment_char = '<comment>'                 " <-- Character or string used 
                                                  " some voluntary options. Before you edit
                                                  " these, please make sure that anyfold
                                                  " works as expected.
-
 "----------------------------------------------------------------------------/
 " Voluntary and experimental options
 "----------------------------------------------------------------------------/
@@ -50,11 +47,12 @@ let s:equalprg_args = ''                         " <-- arguments passed to exter
                                                  "     <nindent>. For example:
                                                  "     let s:equalprg_args = '--indent=<nindent>'
 
-call anyfold#init(s:nindent, s:comment_char, s:equalprg, s:equalprg_args)
-
 if exists('g:anyfold_ftsettings')
     if g:anyfold_ftsettings
                                                  " <-- some language specific vim options
                                                  "     that should be set for anyfold
     endif
 endif
+
+au BufEnter * call anyfold#init(s:nindent, s:comment_char, s:equalprg, s:equalprg_args)
+autocmd! fallback BufEnter *

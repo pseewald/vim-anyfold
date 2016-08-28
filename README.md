@@ -30,13 +30,13 @@ It has the following shortcomings:
     ```
 
     Choose a higher foldlevel if you prefer to have folds open by default.
-3.  Use the spacebar to toggle folds and key combinations `[[` and `]]` to navigate to the beginning and end of the current open fold.
+3. Use the spacebar to toggle folds and key combinations `[[` and `]]` to navigate to the beginning and end of the current open fold.
 
 
 ## Full setup and usage
 
 1. Make sure that `filetype plugin indent on` is in your vimrc. Install this plugin with a vim plugin manager of your choice (e.g. [Pathogen](https://github.com/tpope/vim-pathogen)).
-2. Take a look at the contents of ftplugin directory. If there is a file `<your-filetype>.vim` for the filetype you want to use, AnyFold already supports this filetype. If not, copy the file `filetype.vim.template` to `<your-filetype>.vim` and replace `<filetype>`, `<nindent>`, `<comment>` with the defaults you think are most appropriate for your filetype.
+2. Take a look at the contents of ftplugin directory. If there is a file `<your-filetype>.vim` for the filetype you want to use, AnyFold already supports this filetype. If not, copy the file `filetype.vim.template` to `<your-filetype>.vim` and replace `<nindent>` and `<comment>` with the defaults you think are most appropriate for your filetype.
 3. You need to activate AnyFold in your vimrc, otherwise it will not do anything. You can activate it for all supported filetypes by adding
 
     ```vim

@@ -3,8 +3,6 @@ if exists("b:loaded_anyfold")
 endif
 let b:loaded_anyfold = 1
 
-setlocal filetype=python
-
 if !exists("g:anyfold_activate")
     finish
 elseif !g:anyfold_activate
@@ -19,4 +17,5 @@ let s:comment_char = '#'
 let s:equalprg = ''
 let s:equalprg_args = ''
 
-call anyfold#init(s:nindent, s:comment_char, s:equalprg, s:equalprg_args)
+au BufEnter * call anyfold#init(s:nindent, s:comment_char, s:equalprg, s:equalprg_args)
+autocmd! fallback BufEnter *

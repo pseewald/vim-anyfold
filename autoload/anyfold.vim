@@ -5,6 +5,10 @@
 "----------------------------------------------------------------------------/
 function anyfold#init(nindent, comment_char, equalprg, equalprg_args)
 
+    if exists("b:anyfold_initialised")
+        return
+    endif
+
     if !exists('g:_ANYFOLD_DEFAULTS')
         let g:_ANYFOLD_DEFAULTS = {
                     \ 'ftsettings':                         1,
@@ -94,6 +98,8 @@ function anyfold#init(nindent, comment_char, equalprg, equalprg_args)
         noremap <script> <buffer> <silent> <F12>
                     \ :call <SID>echoBox()<cr>
     endif
+
+    let b:anyfold_initialised = 1
 endfunction
 
 "----------------------------------------------------------------------------/
