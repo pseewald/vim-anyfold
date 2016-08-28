@@ -14,8 +14,7 @@ This Vim plugin comes with the following features:
 
 It has the following shortcomings:
 * Can **not** correctly fold mismatched indentation and thus should only be used together with disciplined programming style (or in combination with Vim's `equalprg` autoindent feature).
-* Calculates all fold levels at load time and thus may have slow startup times for large files.
-* Does not automatically update folds if file changes.
+* It uses Vim's fold-expr and thus may have slow startup times for large files.
 
 
 ## Quick default setup for the impatient
