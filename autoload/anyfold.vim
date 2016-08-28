@@ -28,7 +28,7 @@ function anyfold#init(nindent, comment_char, equalprg, equalprg_args)
     endfor
 
     if executable(g:anyfold_equalprg)
-        exe 'setlocal equalprg='.fnameescape(g:anyfold_equalprg.' '.g:anyfold_equalprg_args)
+        exe 'setlocal equalprg='.fnameescape(g:anyfold_equalprg.' '.substitute(g:anyfold_equalprg_args, '<nindent>', g:anyfold_nindent,''))
         " need to do some cleanup work in case equalprg fails
         " vim has a really bad default solution here (replace text to be
         " formatted by error message)

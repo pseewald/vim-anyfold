@@ -11,7 +11,7 @@ elseif !g:anyfold_activate
     finish
 endif
 
-let s:indent = 4
+let s:nindent = 4
 let s:comment_char = '#'
 
 " we don't use autopep8 by default since python syntax requires correct
@@ -19,4 +19,4 @@ let s:comment_char = '#'
 let s:equalprg = ''
 let s:equalprg_args = ''
 
-call anyfold#init(s:indent, s:comment_char, s:equalprg, s:equalprg_args)
+call anyfold#init(s:nindent, s:comment_char, s:equalprg, s:equalprg_args)

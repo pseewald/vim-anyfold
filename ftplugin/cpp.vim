@@ -11,10 +11,10 @@ elseif !g:anyfold_activate
     finish
 endif
 
-let s:indent = 4
+let s:nindent = 4
 let s:comment_char = '//'
 
 let b:anyfold_docubox_start = '/*'
 let b:anyfold_docubox_end = '*/'
 
-call anyfold#init(s:indent, s:comment_char)
+call anyfold#init(s:nindent, s:comment_char)
