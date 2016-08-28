@@ -15,7 +15,7 @@ function anyfold#init(nindent, comment_char, equalprg, equalprg_args)
                     \ 'fold_display':                       1,
                     \ 'fold_motion':                        1,
                     \ 'toggle_key':                 '<space>',
-                    \ 'reload_key':                    '<F5>',
+                    \ 'reload_folds':                       1,
                     \ 'debug':                              0,
                     \ }
         lockvar! g:_ANYFOLD_DEFAULTS
@@ -55,8 +55,9 @@ function anyfold#init(nindent, comment_char, equalprg, equalprg_args)
     exe 'noremap <script> <buffer> <silent>' g:anyfold_toggle_key
                     \' :call <SID>ToggleFolds()<cr>'
 
-    exe 'noremap <script> <buffer> <silent>' g:anyfold_reload_key
-                    \' :call <SID>ReloadFolds()<cr>'
+    if g:anyfold_reload_folds
+        autocmd BufWritePost * :call s:ReloadFolds()
+    endif
 
     if g:anyfold_fold_motion
         noremap <script> <buffer> <silent> ]]
@@ -103,6 +104,7 @@ function! s:SetGenLangSettings()
     exe 'setlocal tabstop='.g:anyfold_nindent
     exe 'setlocal softtabstop='.g:anyfold_nindent
     setlocal expandtab
+
 endfunction
 
 "----------------------------------------------------------------------------/

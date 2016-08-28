@@ -30,7 +30,7 @@ It has the following shortcomings:
     ```
 
     Choose a higher foldlevel if you prefer to have folds open by default.
-3.  Use the spacebar to toggle folds and key combinations `[[` and `]]` to navigate to the beginning and end of the current open fold. Update folds with `<F5>`.
+3.  Use the spacebar to toggle folds and key combinations `[[` and `]]` to navigate to the beginning and end of the current open fold.
 
 
 ## Full setup and usage
@@ -56,7 +56,7 @@ It has the following shortcomings:
     ```
 
     or choose a higher value to open some or all folds.
-5. You have successfully set up AnyFold and you are ready to try it out. For most cases, using the spacebar to toggle folds is the most convenient way of dealing with folds. If you'd like to open only one fold at a time, use `zo` instead of spacebar. To update folds if file has changed, press F5 key. Read further to learn more functionality.
+5. You have successfully set up AnyFold and you are ready to try it out. For most cases, using the spacebar to toggle folds is the most convenient way of dealing with folds. If you'd like to open only one fold at a time, use `zo` instead of spacebar. Read further to learn more functionality.
 6. Use the key combinations `[[` and `]]` to navigate to the beginning and end of the current block. Use `]k` and `[j` to navigate to the end of the previous block and to the beginning of the next block.
 7. In order to quickly fix indentation when needed, you can either use Vim's integrated `equalprg`, or set up an external autoindenter with AnyFold by
 
@@ -103,7 +103,7 @@ Option | Values | Default value |  Description
 `anyfold_equalprg_args` | string | filetype specific | Arguments for external equalprg
 `anyfold_toggle_key` | string | '\<space\>' | Key to toggle folds recursively
 `anyfold_fold_motion` | 0, 1 | 1 | Map motion commands to `[[`, `]]`, `[j`, `]k`
-`anyfold_reload_key` | string | '\<F5\>' | Key to reload folds
+`anyfold_reload_folds` | 0, 1 | 1 | Automatically reload folds on write
 `anyfold_lang_settings` | 0, 1 |  1  | Use AnyFold's recommended filetype defaults
 `anyfold_docu_fold` | 0, 1 | 0 | Fold documentation boxes (experimental)
 
