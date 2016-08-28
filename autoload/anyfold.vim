@@ -7,15 +7,15 @@ function anyfold#init(nindent, comment_char, equalprg, equalprg_args)
 
     if !exists('g:_ANYFOLD_DEFAULTS')
         let g:_ANYFOLD_DEFAULTS = {
-                    \ 'lang_settings':                      1,
+                    \ 'ftsettings':                         1,
                     \ 'nindent':                    a:nindent,
                     \ 'equalprg':                  a:equalprg,
                     \ 'equalprg_args':        a:equalprg_args,
                     \ 'docu_fold':                          0,
                     \ 'fold_display':                       1,
-                    \ 'fold_motion':                        1,
+                    \ 'motion':                             1,
                     \ 'toggle_key':                 '<space>',
-                    \ 'reload_folds':                       1,
+                    \ 'auto_reload':                        1,
                     \ 'debug':                              0,
                     \ }
         lockvar! g:_ANYFOLD_DEFAULTS
@@ -35,7 +35,7 @@ function anyfold#init(nindent, comment_char, equalprg, equalprg_args)
         autocmd ShellFilterPost * :call s:PostEqualprg()
     endif
 
-    if g:anyfold_lang_settings
+    if g:anyfold_ftsettings
         call s:SetGenLangSettings()
     endif
 
@@ -55,11 +55,11 @@ function anyfold#init(nindent, comment_char, equalprg, equalprg_args)
     exe 'noremap <script> <buffer> <silent>' g:anyfold_toggle_key
                     \' :call <SID>ToggleFolds()<cr>'
 
-    if g:anyfold_reload_folds
+    if g:anyfold_auto_reload
         autocmd BufWritePost * :call s:ReloadFolds()
     endif
 
-    if g:anyfold_fold_motion
+    if g:anyfold_motion
         noremap <script> <buffer> <silent> ]]
                     \ :call <SID>JumpFoldEnd(0)<cr>
 

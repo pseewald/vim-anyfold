@@ -52,8 +52,8 @@ let s:equalprg_args = ''                         " <-- arguments passed to exter
 
 call anyfold#init(s:nindent, s:comment_char, s:equalprg, s:equalprg_args)
 
-if exists('g:anyfold_lang_settings')
-    if g:anyfold_lang_settings
+if exists('g:anyfold_ftsettings')
+    if g:anyfold_ftsettings
                                                  " <-- some language specific vim options
                                                  "     that should be set for anyfold
     endif

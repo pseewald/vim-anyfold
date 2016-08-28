@@ -102,9 +102,9 @@ Option | Values | Default value |  Description
 `anyfold_equalprg` | string | filetype specific | External executable for equalprg
 `anyfold_equalprg_args` | string | filetype specific | Arguments for external equalprg
 `anyfold_toggle_key` | string | '\<space\>' | Key to toggle folds recursively
-`anyfold_fold_motion` | 0, 1 | 1 | Map motion commands to `[[`, `]]`, `[j`, `]k`
-`anyfold_reload_folds` | 0, 1 | 1 | Automatically reload folds on write
-`anyfold_lang_settings` | 0, 1 |  1  | Use AnyFold's recommended filetype defaults
+`anyfold_motion` | 0, 1 | 1 | Map motion commands to `[[`, `]]`, `[j`, `]k`
+`anyfold_auto_reload` | 0, 1 | 1 | Automatically reload folds on write
+`anyfold_ftsettings` | 0, 1 |  1  | Use AnyFold's recommended filetype defaults
 `anyfold_docu_fold` | 0, 1 | 0 | Fold documentation boxes (experimental)
 
 
