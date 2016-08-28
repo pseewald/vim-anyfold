@@ -15,6 +15,7 @@ This Vim plugin comes with the following features:
 It has the following shortcomings:
 * Can **not** correctly fold mismatched indentation and thus should only be used together with disciplined programming style (or in combination with Vim's `equalprg` autoindent feature).
 * It uses Vim's fold-expr and thus may have slow startup times for large files.
+* Indent based text objects not yet implemented - for that I recommend [vim-indent-object](https://github.com/michaeljsmith/vim-indent-object).
 
 
 ## Quick default setup for the impatient
@@ -105,6 +106,7 @@ Option | Values | Default value |  Description
 `anyfold_reload_folds` | 0, 1 | 1 | Automatically reload folds on write
 `anyfold_lang_settings` | 0, 1 |  1  | Use AnyFold's recommended filetype defaults
 `anyfold_docu_fold` | 0, 1 | 0 | Fold documentation boxes (experimental)
+
 
 ## Contributing
 
