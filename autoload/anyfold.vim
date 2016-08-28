@@ -3,24 +3,32 @@
 "----------------------------------------------------------------------------/
 " Activation of requested features
 "----------------------------------------------------------------------------/
-function anyfold#init(nindent, comment_char, equalprg, equalprg_args)
+function anyfold#init(nindent, comment_char)
 
     if exists("b:anyfold_initialised")
         return
     endif
 
+    if !exists("b:anyfold_equalprg")
+        let b:anyfold_equalprg = ''
+    endif
+
+    if !exists("b:anyfold_equalprg_args")
+        let b:anyfold_equalprg_args = ''
+    endif
+
     if !exists('g:_ANYFOLD_DEFAULTS')
         let g:_ANYFOLD_DEFAULTS = {
-                    \ 'ftsettings':                         1,
-                    \ 'nindent':                    a:nindent,
-                    \ 'equalprg':                  a:equalprg,
-                    \ 'equalprg_args':        a:equalprg_args,
-                    \ 'docu_fold':                          0,
-                    \ 'fold_display':                       1,
-                    \ 'motion':                             1,
-                    \ 'toggle_key':                 '<space>',
-                    \ 'auto_reload':                        1,
-                    \ 'debug':                              0,
+                    \ 'ftsettings':                   1,
+                    \ 'nindent':                      a:nindent,
+                    \ 'equalprg':                     b:anyfold_equalprg,
+                    \ 'equalprg_args':                b:anyfold_equalprg_args,
+                    \ 'docu_fold':                    0,
+                    \ 'fold_display':                 1,
+                    \ 'motion':                       1,
+                    \ 'toggle_key':                   '<space>',
+                    \ 'auto_reload':                  1,
+                    \ 'debug':                        0,
                     \ }
         lockvar! g:_ANYFOLD_DEFAULTS
     endif

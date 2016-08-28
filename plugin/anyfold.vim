@@ -13,10 +13,7 @@ endif
 let s:nindent = 4
 let s:comment_char = ''
 
-let s:equalprg = ''
-let s:equalprg_args = ''
-
-" ftplugin will delete this augroup
+" ftplugin will delete this augroup if it exists
 augroup fallback
-au BufEnter * call anyfold#init(s:nindent, s:comment_char, s:equalprg, s:equalprg_args)
+au BufEnter * call anyfold#init(s:nindent, s:comment_char)
 augroup end

@@ -18,11 +18,13 @@ endif
 let s:nindent = <nindent>                        " <-- Default indent width (e.g. 4)
 let s:comment_char = '<comment>'                 " <-- Character or string used for comments (e.g. #)
                                                  " Now you are already done. Below are
-                                                 " some voluntary options. Before you edit
-                                                 " these, please make sure that anyfold
-                                                 " works as expected.
+                                                 " some voluntary options.
+
+au BufEnter * call anyfold#init(s:nindent, s:comment_char)
+autocmd! fallback BufEnter *
+
 "----------------------------------------------------------------------------/
-" Voluntary and experimental options
+" Voluntary and experimental options, delete these if not needed
 "----------------------------------------------------------------------------/
                                                  " The following options are voluntary
                                                  " and can be left empty.
@@ -34,9 +36,9 @@ let b:anyfold_docubox_start = ''                 " <-- String that starts first 
 let b:anyfold_docubox_end = ''                   " <-- String that starts last line of a
                                                  "     docu box (experimental)
 
-let s:equalprg = ''                              " <-- external tool (executable)
+let b:anyfold_equalprg = ''                      " <-- external tool (executable)
                                                  "     to be used for auto indents
-let s:equalprg_args = ''                         " <-- arguments passed to external equalprg
+let b:anyfold_equalprg_args = ''                 " <-- arguments passed to external equalprg
                                                  "     Hints for setting up equalprg:
                                                  "     equalprg must accept its input through
                                                  "     stdin and return the result to stdout.
@@ -53,6 +55,3 @@ if exists('g:anyfold_ftsettings')
                                                  "     that should be set for anyfold
     endif
 endif
-
-au BufEnter * call anyfold#init(s:nindent, s:comment_char, s:equalprg, s:equalprg_args)
-autocmd! fallback BufEnter *

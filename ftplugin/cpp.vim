@@ -15,5 +15,5 @@ let s:comment_char = '//'
 let b:anyfold_docubox_start = '/*'
 let b:anyfold_docubox_end = '*/'
 
-au BufEnter * call anyfold#init(s:nindent, s:comment_char, s:equalprg, s:equalprg_args)
+au BufEnter * call anyfold#init(s:nindent, s:comment_char)
 autocmd! fallback BufEnter *

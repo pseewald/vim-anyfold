@@ -12,8 +12,5 @@ endif
 let s:nindent = 4
 let s:comment_char = '"'
 
-let s:equalprg = ''
-let s:equalprg_args = ''
-
-au BufEnter * call anyfold#init(s:nindent, s:comment_char, s:equalprg, s:equalprg_args)
+au BufEnter * call anyfold#init(s:nindent, s:comment_char)
 autocmd! fallback BufEnter *
