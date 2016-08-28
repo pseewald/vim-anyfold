@@ -15,7 +15,7 @@ This Vim plugin comes with the following features:
 It has the following shortcomings:
 * Can **not** correctly fold mismatched indentation and thus should only be used together with disciplined programming style (or in combination with Vim's `equalprg` autoindent feature).
 * It uses Vim's fold-expr and thus may have slow startup times for large files.
-* Indent based text objects not yet implemented - for that I recommend [vim-indent-object](https://github.com/michaeljsmith/vim-indent-object).
+* Indent based text objects not implemented - for that I recommend [vim-indent-object](https://github.com/michaeljsmith/vim-indent-object).
 
 
 ## Quick default setup for the impatient
@@ -36,7 +36,7 @@ It has the following shortcomings:
 ## Full setup and usage
 
 1. Make sure that `filetype plugin indent on` is in your vimrc. Install this plugin with a vim plugin manager of your choice (e.g. [Pathogen](https://github.com/tpope/vim-pathogen)).
-2. Take a look at the contents of ftplugin directory. If there is a file `<your-filetype>.vim` for the filetype you want to use, AnyFold already supports this filetype. If not, copy the file `filetype.vim.template` to `<your-filetype>.vim` and replace `<filetype>`, `<indent>`, `<comment>` with the defaults you think are most appropriate for your filetype.
+2. Take a look at the contents of ftplugin directory. If there is a file `<your-filetype>.vim` for the filetype you want to use, AnyFold already supports this filetype. If not, copy the file `filetype.vim.template` to `<your-filetype>.vim` and replace `<filetype>`, `<nindent>`, `<comment>` with the defaults you think are most appropriate for your filetype.
 3. You need to activate AnyFold in your vimrc, otherwise it will not do anything. You can activate it for all supported filetypes by adding
 
     ```vim
@@ -71,7 +71,7 @@ It has the following shortcomings:
     autocmd Filetype <my-filetype> let anyfold_equalprg_args='<arg1> <arg2> <...>'
     ```
 
-    Auto-indenting is invoked with `=` (`gg=G` to indent the entire file). Of course Vim's option `equalprg` can be set directly but this is not recommended. If `anyfold_equalprg` is used, AnyFold will take care that `=` is undone if it fails (in contrast to Vim's default behaviour which replaces the text by an error message).
+    Auto-indenting is invoked with `=` (`gg=G` to indent the entire file). Of course Vim's option `equalprg` can be set directly but this is not recommended. If `anyfold_equalprg` is set, AnyFold will take care that `=` is undone if it fails (in contrast to Vim's default behaviour which replaces the text by an error message).
 8. AnyFold's minimalistic display of closed fold assumes that folds are highlighted by your color scheme. If that is not the case, consider installing a suitable color scheme or highlight folds yourself by a command similar to
 
     ```vim
@@ -114,7 +114,6 @@ Don't hesitate to get in touch with me if you have any suggestions or comments. 
 * If you add new filetypes to the plugin, please contribute it to the project by *pull request*.
 * If you find bugs or if you don't like this plugin, create an *issue* before giving up on this plugin.
 * If you find that this plugin does not behave as you'd like for a given filetype, create an *issue*.
-* If there already exists a plugin for the same purpuse (I could not find any), please let me know.
 
 
 ## License
