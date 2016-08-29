@@ -9,7 +9,6 @@ This Vim plugin comes with the following features:
 * Folding mechanism based on visually indented blocks that has a very intuitive and predictable behaviour.
 * Results comparable to syntax aware folding methods but generic algorithm that does not rely on language specific rules.
 * Shortcuts to toggle folds and to navigate to beginning / end of a block and to previous / next indented block.
-* Can be configured for new filetypes in less than 5 minutes.
 * Can handle corner cases with ease (comments, varying indentation widths, line breaks).
 
 It has the following shortcomings:
@@ -37,16 +36,16 @@ It has the following shortcomings:
 
 1. Make sure that `filetype plugin indent on` is in your vimrc. Install this plugin with a vim plugin manager of your choice (e.g. [Pathogen](https://github.com/tpope/vim-pathogen)).
 2. Take a look at the contents of ftplugin directory. If there is a file `<your-filetype>.vim` for the filetype you want to use, AnyFold already supports this filetype. If not, copy the file `filetype.vim.template` to `<your-filetype>.vim` and replace `<nindent>` and `<comment>` with the defaults you think are most appropriate for your filetype.
-3. You need to activate AnyFold in your vimrc, otherwise it will not do anything. You can activate it for all supported filetypes by adding
+3. You need to activate AnyFold in your vimrc, otherwise it will not do anything. You can activate it for all filetypes by adding
 
     ```vim
     let anyfold_activate=1
     ```
 
-    or, alternatively, activate it only for a selected filetype (e.g. python) with
+    or, alternatively, activate it only for a selected <filetype> with
 
     ```vim
-    autocmd Filetype python let anyfold_activate=1
+    autocmd Filetype <filetype> let anyfold_activate=1
     ```
 
 4. The behaviour of folds is defined by the vim option `foldlevel`. To close all folds when opening a file, add
