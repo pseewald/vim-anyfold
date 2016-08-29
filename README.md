@@ -34,7 +34,7 @@ It has the following shortcomings:
 
 ## Full setup and usage
 
-1. Make sure that `filetype plugin indent on` is in your vimrc. Install this plugin with a vim plugin manager of your choice (e.g. [Pathogen](https://github.com/tpope/vim-pathogen)).
+1. Make sure that `filetype plugin indent on` is in your vimrc. Install this plugin with a vim plugin manager of your choice.
 2. Take a look at the contents of ftplugin directory. If there is a file `<your-filetype>.vim` for the filetype you want to use, AnyFold already supports this filetype. If not, copy the file `filetype.vim.template` to `<your-filetype>.vim` and replace `<nindent>` and `<comment>` with the defaults you think are most appropriate for your filetype.
 3. You need to activate AnyFold in your vimrc, otherwise it will not do anything. You can activate it for all filetypes by adding
 
@@ -55,7 +55,7 @@ It has the following shortcomings:
     ```
 
     or choose a higher value to open some or all folds.
-5. You have successfully set up AnyFold and you are ready to try it out. For most cases, using the spacebar to toggle folds is the most convenient way of dealing with folds. If you'd like to open only one fold at a time, use `zo` instead of spacebar. Read further to learn more functionality.
+5. You have successfully set up AnyFold and you are ready to try it out. For most cases, using the spacebar to toggle folds is the most convenient way of dealing with folds. Note that this always recursively opens all folds under the cursor. If you don't like this, you can easily refold by placing the cursor somewhere inside the open fold and hitting "zx".
 6. Use the key combinations `[[` and `]]` to navigate to the beginning and end of the current block. Use `]k` and `[j` to navigate to the end of the previous block and to the beginning of the next block.
 7. In order to quickly fix indentation when needed, you can either use Vim's integrated `equalprg`, or set up an external autoindenter with AnyFold by
 
@@ -63,7 +63,7 @@ It has the following shortcomings:
     autocmd Filetype <my-filetype> let anyfold_equalprg='<my-indent-command>'
     ```
 
-    The external program `<my-indent-command>` needs to be in your PATH and must accept its input via `stdin` and return the indented text to `stdout`.
+    The external program <my-indent-command> needs to be in your PATH and must accept its input via `stdin` and return the indented text to `stdout`.
     If you need to pass arguments to `<my-indent-command>`, add them via
 
     ```vim
