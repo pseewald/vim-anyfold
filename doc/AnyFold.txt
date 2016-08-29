@@ -137,8 +137,9 @@ https://github.com/pseewald/AnyFold
 ==============================================================================
 6. Changelog                                                   *AnyFoldChangelog*
 
-v0.1
-    * Initial release (beta)
+v0.2 - second pre-release
+
+For full changelog, visit https://github.com/pseewald/AnyFold
 
 ==============================================================================
 7. License                                                     *AnyFoldLicense*
