@@ -61,7 +61,7 @@ It has the following shortcomings:
 7. In order to quickly fix indentation when needed, you can either use Vim's integrated `equalprg`, or set up an external autoindenter with AnyFold by
 
     ```vim
-    autocmd Filetype <my-filetype> let anyfold_equalprg=<my-indent-command>
+    autocmd Filetype <my-filetype> let anyfold_equalprg='<my-indent-command>'
     ```
 
     The external program `<my-indent-command>` needs to be in your PATH and must accept its input via `stdin` and return the indented text to `stdout`.
