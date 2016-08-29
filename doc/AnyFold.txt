@@ -1,0 +1,167 @@
+*AnyFold.txt*    indent based folding of anything and everything    *AnyFold*
+
+==============================================================================
+CONTENTS                                                       *AnyFoldContents*
+
+    1. Introduction .....................|AnyFoldIntroduction|
+    2. Usage ............................|AnyFoldUsage|
+    3. Configuration ....................|AnyFoldConfiguration|
+    4. Options ..........................|AnyFoldOptions|
+    5. Contributing .....................|AnyFoldContributing|
+    6. Changelog ........................|AnyFoldChangelog|
+    7. License ..........................|AnyFoldLicense|
+
+==============================================================================
+1. Introduction                                               *AnyFoldIntroduction*
+
+AnyFold allows quick navigation and focus in files that are structured by
+indentation. Its folding mechanism is generic and works equally well for any
+language. Folds based on indented blocks are very useful to reveal the logical
+structure of a complex file and to hide irrelevant information.
+
+To get an idea of how it works and why it is so useful, you need to try it
+yourself. Nonetheless, here comes a rough description of how folds are defined:
+each line followed by a hanging indent starts a new fold. A fold is closed by
+the next line with the same indent as the first line of the fold. The actual
+indents present in a file are carefully postprocessed to ensure that every fold
+contain exactly one logical block of code. AnyFold can handle many corner cases
+such as comments, empty lines and varying indentation widths.
+
+==============================================================================
+2. Usage                                                         *AnyFoldUsage*
+
+AnyFold needs to be activated by adding one line to your vimrc:
+
+* AnyFold active for all filetypes
+    let anyfold_activate=1
+
+* AnyFold active for a specific filetype
+    autocmd Filetype <your-filetype> let anyfold_activate=1
+
+For dealing with folds in general, see |fold-commands|, |fold-options| and
+|fold-behavior|. Additionally, AnyFold defines the following mappings:
+
+  <Space>       Toggle folds. Behaves as "zO" if cursor on closed folds and
+                as "zc" if cursor in open fold.
+
+    [[          Move to the beginning of the current block.      *AnyFoldMotion*
+    ]]          Move to the end of the current block.
+    ]k          Move to the end of the previous block.
+    [j          Move to the beginning of the next block.
+
+The move commands are very similar to the default fold motion commands
+"[z", "]z", "zj", "zk" but they are more intuitive for indented blocks. More
+specifically, the first line of a block is defined as the first line in a fold
+and the last line of a block as the next line after the last line in a fold.
+
+Since AnyFold can not correctly fold mismatched indentation, auto-indenting
+is highly recommended. This can be done either with Vim's integrated
+|equalprg| or with an external tool. In either case, auto-indenting is done
+using the "=" operator.
+
+                                                                 *AnyFoldEqualprg*
+In order to couple an external auto-indent command with AnyFold, add to your
+    vimrc autocmd Filetype <my-filetype> let anyfold_equalprg='<my-indent-command>'
+
+The external program <my-indent-command> needs to be in your PATH and must
+accept its input via stdin and return the indented text to stdout. If you
+need to pass arguments to <my-indent-command>, add them by
+    autocmd Filetype <my-filetype> let anyfold_equalprg_args='<arg1> <arg2> <...>'
+
+Note that the main difference between setting Vim's internal 'equalprg' and
+'anyfold_equalprg' is that 'anyfold_equalprg' will undo the formatting if the
+external command fails.
+
+==============================================================================
+3. Configuration                                           *AnyFoldConfiguration*
+
+Even though AnyFold works out of the box for any filetype, it is convenient
+to configure it with a few filetype specific defaults such as:
+* what symbol defines a comment?
+* what should be the default indentation width?
+* what should be the default 'equalprg'?
+AnyFold needs to know about the comment symbol in order to ignore comments for
+folds.
+
+The configuration for specific filetypes is specified by plugins in the
+anyfold/ftplugin directory. If your filetype is not yet present as a file
+called <filetype>.vim in this directory, copy filetype.vim.template to
+<filetype>.vim and follow the in-file instructions to replace the relevant
+fields.  This is really easy and will not take longer than 5 minutes. If you
+add a new filetype, please contribute it to the project by pull request (see
+|AnyFoldContributing|).
+
+==============================================================================
+4. Options                                                   *AnyFoldOptions*
+
+For more control over mappings and features, AnyFold provides the following
+options. These can be set either globally
+    let <option>=<value>
+
+or filetype specific
+    autocmd Filetype <filetype> let <option>=<value>
+
+Option                 | Description
+----------------------------------------------------------------------
+anyfold_nindent       | Indentation width
+anyfold_fold_display  | Minimalistic display of closed folds
+anyfold_equalprg      | External executable for equalprg
+anyfold_equalprg_args | Arguments for external equalprg
+anyfold_toggle_key    | Key to toggle folds
+anyfold_motion        | Map motion commands (|AnyFoldMotion|)
+anyfold_auto_reload   | Automatically reload folds on write
+anyfold_ftsettings    | Use AnyFold's recommended filetype defaults
+anyfold_docu_fold     | Fold documentation boxes (experimental)
+
+Option                | Type    | Default value               *AnyFoldDefaults*
+----------------------------------------------------------------------
+anyfold_nindent       | integer | Filetype specific
+anyfold_fold_display  | 0, 1    | 1 (= 'on')
+anyfold_equalprg      | string  | Filetype specific
+anyfold_equalprg_args | string  | Filetype specific
+anyfold_toggle_key    | string  | '<Space>'
+anyfold_motion        | 0, 1    | 1 (= 'on')
+anyfold_auto_reload   | 0, 1    | 1 (= 'on')
+anyfold_ftsettings    | 0, 1    | 1 (= 'on')
+anyfold_docu_fold     | 0, 1    | 0 (= 'off')
+
+==============================================================================
+5. Contributing                                              *AnyFoldContributing*
+
+Contribute to this project by
+* adding new filetypes to the plugin
+* create an issue if AnyFold does not behave as you'd like for a given filetype
+For more information, visit the official repository
+https://github.com/pseewald/AnyFold
+
+==============================================================================
+6. Changelog                                                   *AnyFoldChangelog*
+
+v0.1
+    * Initial release (beta)
+
+==============================================================================
+7. License                                                     *AnyFoldLicense*
+MIT License
+
+Copyright (c) 2016 Patrick Seewald
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+==============================================================================
+ vim:tw=78:ts=8:ft=help:norl:

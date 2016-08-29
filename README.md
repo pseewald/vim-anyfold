@@ -98,10 +98,10 @@ autocmd Filetype <filetype> let <option>=<value>
 Option | Values | Default value |  Description
 ------ | -------------- | ------------- | ------------
 `anyfold_nindent` | integer | filetype specific | Indentation width
-`anyfold_fold_display` | 0, 1 | 1 | Improved display of closed folds
+`anyfold_fold_display` | 0, 1 | 1 | Minimalistic display of closed folds
 `anyfold_equalprg` | string | filetype specific | External executable for equalprg
 `anyfold_equalprg_args` | string | filetype specific | Arguments for external equalprg
-`anyfold_toggle_key` | string | '\<space\>' | Key to toggle folds recursively
+`anyfold_toggle_key` | string | '\<space\>' | Key to toggle folds
 `anyfold_motion` | 0, 1 | 1 | Map motion commands to `[[`, `]]`, `[j`, `]k`
 `anyfold_auto_reload` | 0, 1 | 1 | Automatically reload folds on write
 `anyfold_ftsettings` | 0, 1 |  1  | Use AnyFold's recommended filetype defaults
