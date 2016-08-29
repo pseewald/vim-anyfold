@@ -113,3 +113,9 @@ Don't hesitate to get in touch with me if you have any suggestions or comments. 
 * If you add new filetypes to the plugin, please contribute it to the project by *pull request*.
 * If you find bugs or if you don't like this plugin, create an *issue* before giving up on this plugin.
 * If you find that this plugin does not behave as you'd like for a given filetype, create an *issue*.
+
+
+## Acknowledgements
+
+I thank the following people for their contribution
+* Greg Sexton for allowing me to use [his function](http://www.gregsexton.org/2011/03/improving-the-text-displayed-in-a-fold/) for improved fold display.
