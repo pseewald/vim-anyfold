@@ -3,7 +3,7 @@
 "----------------------------------------------------------------------------/
 " Activation of requested features
 "----------------------------------------------------------------------------/
-function anyfold#init(nindent, comment_char)
+function anyfold#init(comment_sym)
 
     if exists("b:anyfold_initialised")
         return
@@ -19,8 +19,6 @@ function anyfold#init(nindent, comment_char)
 
     if !exists('g:_ANYFOLD_DEFAULTS')
         let g:_ANYFOLD_DEFAULTS = {
-                    \ 'ftsettings':                   1,
-                    \ 'nindent':                      a:nindent,
                     \ 'equalprg':                     b:anyfold_equalprg,
                     \ 'equalprg_args':                b:anyfold_equalprg_args,
                     \ 'docu_fold':                    0,
@@ -40,18 +38,14 @@ function anyfold#init(nindent, comment_char)
     endfor
 
     if executable(g:anyfold_equalprg)
-        exe 'setlocal equalprg='.fnameescape(g:anyfold_equalprg.' '.substitute(g:anyfold_equalprg_args, '<nindent>', g:anyfold_nindent,''))
+        exe 'setlocal equalprg='.fnameescape(g:anyfold_equalprg.' '.g:anyfold_equalprg_args)
         " need to do some cleanup work in case equalprg fails
         " vim has a really bad default solution here (replace text to be
         " formatted by error message)
         autocmd ShellFilterPost * :call s:PostEqualprg()
     endif
 
-    if g:anyfold_ftsettings
-        call s:SetGenLangSettings()
-    endif
-
-    let s:comment_char = a:comment_char
+    let s:comment_sym = a:comment_sym
     let b:anyfold_indent_list = s:GetIndentList()
     lockvar! b:anyfold_indent_list
     let b:anyfold_doculines = s:GetDocuBoxes()
@@ -111,17 +105,6 @@ function anyfold#init(nindent, comment_char)
 endfunction
 
 "----------------------------------------------------------------------------/
-" Setting indentation width
-"----------------------------------------------------------------------------/
-function! s:SetGenLangSettings()
-    exe 'setlocal shiftwidth='.g:anyfold_nindent
-    exe 'setlocal tabstop='.g:anyfold_nindent
-    exe 'setlocal softtabstop='.g:anyfold_nindent
-    setlocal expandtab
-
-endfunction
-
-"----------------------------------------------------------------------------/
 " Cleanup incase equalprg failed
 "----------------------------------------------------------------------------/
 function! s:PostEqualprg()
@@ -139,7 +122,7 @@ function! s:NextNonBlankLine(lnum)
     let current = a:lnum + 1
 
     while current <= numlines
-        if getline(current) =~? '\v\S' && getline(current) !~? '\v^['.s:comment_char.'#]'
+        if getline(current) =~? '\v\S' && getline(current) !~? '\v^['.s:comment_sym.'#]'
             return current
         endif
 
@@ -153,7 +136,7 @@ function! s:PrevNonBlankLine(lnum)
     let current = a:lnum - 1
 
     while current > 0
-        if getline(current) =~? '\v\S' && getline(current) !~? '\v^['.s:comment_char.'#]'
+        if getline(current) =~? '\v\S' && getline(current) !~? '\v^['.s:comment_sym.'#]'
             return current
         endif
 
@@ -173,7 +156,7 @@ function! s:GetIndentList()
     while current <= numlines
         let prev_indent = indent(s:PrevNonBlankLine(current))
         let next_indent = indent(s:NextNonBlankLine(current))
-        if getline(current) =~? '\v\S' && getline(current) !~? '\v^['.s:comment_char.'#]'
+        if getline(current) =~? '\v\S' && getline(current) !~? '\v^['.s:comment_sym.'#]'
             let ind_list += [indent(current)]
         else
             let ind_list += [max([prev_indent,next_indent])]

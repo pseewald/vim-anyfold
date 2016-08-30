@@ -87,7 +87,7 @@ The configuration for specific filetypes is specified by plugins in the
 anyfold/ftplugin directory. If your filetype is not yet present as a file
 called <filetype>.vim in this directory, copy filetype.vim.template to
 <filetype>.vim and follow the in-file instructions to replace the relevant
-fields.  This is really easy and will not take longer than 5 minutes. If you
+fields. This is really easy and will not take longer than 5 minutes. If you
 add a new filetype, please contribute it to the project by pull request (see
 |AnyFoldContributing|).
 
@@ -103,26 +103,22 @@ or filetype specific
 
 Option                 | Description
 ----------------------------------------------------------------------
-anyfold_nindent       | Indentation width
 anyfold_fold_display  | Minimalistic display of closed folds
 anyfold_equalprg      | External executable for equalprg
 anyfold_equalprg_args | Arguments for external equalprg
 anyfold_toggle_key    | Key to toggle folds
 anyfold_motion        | Map motion commands (|AnyFoldMotion|)
 anyfold_auto_reload   | Automatically reload folds on write
-anyfold_ftsettings    | Use AnyFold's recommended filetype defaults
 anyfold_docu_fold     | Fold documentation boxes (experimental)
 
 Option                | Type    | Default value               *AnyFoldDefaults*
 ----------------------------------------------------------------------
-anyfold_nindent       | integer | Filetype specific
 anyfold_fold_display  | 0, 1    | 1 (= 'on')
 anyfold_equalprg      | string  | Filetype specific
 anyfold_equalprg_args | string  | Filetype specific
 anyfold_toggle_key    | string  | '<Space>'
 anyfold_motion        | 0, 1    | 1 (= 'on')
 anyfold_auto_reload   | 0, 1    | 1 (= 'on')
-anyfold_ftsettings    | 0, 1    | 1 (= 'on')
 anyfold_docu_fold     | 0, 1    | 0 (= 'off')
 
 ==============================================================================

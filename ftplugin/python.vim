@@ -9,8 +9,7 @@ elseif !g:anyfold_activate
     finish
 endif
 
-let s:nindent = 4
-let s:comment_char = '#'
+let s:comment_sym = '#'
 
-au BufEnter * call anyfold#init(s:nindent, s:comment_char)
+au BufEnter * call anyfold#init(s:comment_sym)
 autocmd! fallback BufEnter *

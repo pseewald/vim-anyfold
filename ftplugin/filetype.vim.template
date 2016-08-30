@@ -15,12 +15,12 @@ endif
 "----------------------------------------------------------------------------/
 " Mandatory options
 "----------------------------------------------------------------------------/
-let s:nindent = <nindent>                        " <-- Default indent width (e.g. 4)
-let s:comment_char = '<comment>'                 " <-- Character or string used for comments (e.g. #)
+let s:comment_sym = '<comment_symbol>'           " <-- Character or string designating
+                                                 "     comments.
                                                  " Now you are already done. Below are
                                                  " some voluntary options.
 
-au BufEnter * call anyfold#init(s:nindent, s:comment_char)
+au BufEnter * call anyfold#init(s:comment_sym)
 autocmd! fallback BufEnter *
 
 "----------------------------------------------------------------------------/
@@ -32,9 +32,11 @@ let b:anyfold_docubox_mark = ''                  " <-- String that starts all li
                                                  "     docu boxes
                                                  "     (e.g. '!>' for Fortran + Doxygen)
 let b:anyfold_docubox_start = ''                 " <-- String that starts first line of a
-                                                 "     docu box (experimental)
+                                                 "     docu box or multiline comment
+                                                       (experimental)
 let b:anyfold_docubox_end = ''                   " <-- String that starts last line of a
-                                                 "     docu box (experimental)
+                                                 "     docu box or multiline comment
+                                                       (experimental)
 
 let b:anyfold_equalprg = ''                      " <-- external tool (executable)
                                                  "     to be used for auto indents
@@ -44,14 +46,3 @@ let b:anyfold_equalprg_args = ''                 " <-- arguments passed to exter
                                                  "     stdin and return the result to stdout.
                                                  "     It should not print errors or warnings
                                                  "     (unless it fails).
-                                                 "     To pass anyfold's default indent
-                                                 "     (anyfold_nindent variable), use expression
-                                                 "     <nindent>. For example:
-                                                 "     let s:equalprg_args = '--indent=<nindent>'
-
-if exists('g:anyfold_ftsettings')
-    if g:anyfold_ftsettings
-                                                 " <-- some language specific vim options
-                                                 "     that should be set for anyfold
-    endif
-endif

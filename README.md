@@ -35,7 +35,7 @@ It has the following shortcomings:
 ## Full setup and usage
 
 1. Make sure that `filetype plugin indent on` is in your vimrc. Install this plugin with a vim plugin manager of your choice.
-2. Take a look at the contents of ftplugin directory. If there is a file `<your-filetype>.vim` for the filetype you want to use, AnyFold already supports this filetype. If not, copy the file `filetype.vim.template` to `<your-filetype>.vim` and replace `<nindent>` and `<comment>` with the defaults you think are most appropriate for your filetype.
+2. Take a look at the contents of ftplugin directory. If there is a file `<your-filetype>.vim` for the filetype you want to use, AnyFold already supports this filetype. If not, copy the file `filetype.vim.template` to `<your-filetype>.vim` and follow the in-file instructions to replace the relevant fields.
 3. You need to activate AnyFold in your vimrc, otherwise it will not do anything. You can activate it for all filetypes by adding
 
     ```vim
@@ -96,14 +96,12 @@ autocmd Filetype <filetype> let <option>=<value>
 
 Option | Values | Default value |  Description
 ------ | -------------- | ------------- | ------------
-`anyfold_nindent` | integer | filetype specific | Indentation width
 `anyfold_fold_display` | 0, 1 | 1 | Minimalistic display of closed folds
 `anyfold_equalprg` | string | filetype specific | External executable for equalprg
 `anyfold_equalprg_args` | string | filetype specific | Arguments for external equalprg
 `anyfold_toggle_key` | string | '\<space\>' | Key to toggle folds
 `anyfold_motion` | 0, 1 | 1 | Map motion commands to `[[`, `]]`, `[j`, `]k`
 `anyfold_auto_reload` | 0, 1 | 1 | Automatically reload folds on write
-`anyfold_ftsettings` | 0, 1 |  1  | Use AnyFold's recommended filetype defaults
 `anyfold_docu_fold` | 0, 1 | 0 | Fold documentation boxes (experimental)
 
 
