@@ -77,6 +77,15 @@ It has the following shortcomings:
     hi Folded term=underline
     ```
 
+9. For expert configuration, AnyLoad triggers an event `AnyFoldLoaded` after initialisation. This enables user-defined startup steps such as
+
+    ```vim
+    autocmd User AnyFoldLoaded normal zv
+    ```
+
+   which unfolds the line in which the cursor is located when opening a file.
+10. For more detailed instructions and information, read the included vim doc `:h AnyFold`.
+
 
 ## Options
 

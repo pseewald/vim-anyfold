@@ -104,6 +104,7 @@ function anyfold#init(comment_sym)
     endif
 
     let b:anyfold_initialised = 1
+    doautocmd User AnyFoldLoaded
 endfunction
 
 "----------------------------------------------------------------------------/

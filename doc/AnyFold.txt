@@ -91,6 +91,12 @@ fields. This is really easy and will not take longer than 5 minutes. If you
 add a new filetype, please contribute it to the project by pull request (see
 |AnyFoldContributing|).
 
+                                                              *AnyFoldLoaded*
+For expert configuration, AnyFold triggers an |autocmd-event| `AnyFoldLoaded`
+after initialisation. This enables user-defined initialisation steps such as
+    autocmd User AnyFoldLoaded normal zv
+which unfolds the line in which the cursor is located when opening a file.
+
 ==============================================================================
 4. Options                                                   *AnyFoldOptions*
 
