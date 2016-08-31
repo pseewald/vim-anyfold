@@ -51,8 +51,10 @@ function anyfold#init(comment_sym)
     let b:anyfold_doculines = s:GetDocuBoxes()
     lockvar! b:anyfold_doculines
 
-    setlocal foldmethod=expr
-    setlocal foldexpr=GetIndentFold(v:lnum)
+    if !&diff
+        setlocal foldmethod=expr
+        setlocal foldexpr=GetIndentFold(v:lnum)
+    endif
 
     if g:anyfold_fold_display
         setlocal foldtext=MinimalFoldText()
