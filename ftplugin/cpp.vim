@@ -11,8 +11,8 @@ endif
 
 let s:comment_sym = '//'
 
-let b:anyfold_docubox_start = '/*'
-let b:anyfold_docubox_end = '*/'
+"let b:anyfold_docubox_start = '/*'
+"let b:anyfold_docubox_end = '*/'
 
 au BufEnter * call anyfold#init(s:comment_sym)
 autocmd! fallback BufEnter *
