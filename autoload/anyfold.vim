@@ -257,7 +257,7 @@ endfunction
 function! s:ToggleFolds()
    if foldclosed(line('.')) != -1
        normal zO
-   else
+   elseif foldlevel('.') != 0
        normal zc
    endif
 endfunction
@@ -306,15 +306,22 @@ endfunction
 
 "----------------------------------------------------------------------------/
 " Motion
+" FIXME: implementation based on existing move commands is hackish
 "----------------------------------------------------------------------------/
 function! s:JumpFoldStart(visual)
     if a:visual
         normal! gv
     endif
+    if line('.') == 1
+        return
+    endif
+    if foldlevel('.') == 0 || foldlevel(line('.')-1) == 0
+        return
+    endif
+    let curr_ind = b:anyfold_indent_list[line('.')]
     if b:anyfold_indent_list[line('.')-1] < b:anyfold_indent_list[line('.')]
         normal! j
     endif
-    let curr_ind = b:anyfold_indent_list[line('.')]
     normal! k[z0
     while b:anyfold_indent_list[line('.')] > curr_ind
         normal! [z0
@@ -325,12 +332,16 @@ function! s:JumpFoldEnd(visual)
     if a:visual
         normal! gv
     endif
+    if line('.') == line('$')
+        return
+    endif
     if b:anyfold_indent_list[line('.')+1] < b:anyfold_indent_list[line('.')]
         normal! k
     endif
     let curr_ind = b:anyfold_indent_list[line('.')]
     normal! ]zj0
     while b:anyfold_indent_list[line('.')] > curr_ind
+           \ && line('.') < line('$')
         normal! ]zj0
     endwhile
 endfunction
