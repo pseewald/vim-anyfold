@@ -2,6 +2,7 @@
 
 Generic folding mechanism based on indentation. Fold anything that is structured into indented blocks.
 
+**NOTE**: this plugin is under very active development and still in beta phase. If you use it, make sure to update it regularly to get the newest bug fixes.
 
 ## Introduction
 
