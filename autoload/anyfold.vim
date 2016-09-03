@@ -94,11 +94,10 @@ function anyfold#init(comment_sym)
     endif
 
     if g:anyfold_debug
-        noremap <script> <buffer> <silent> <F11>
+        noremap <script> <buffer> <silent> <F10>
                     \ :call <SID>echoLineIndent()<cr>
-    endif
-
-    if g:anyfold_debug
+        noremap <script> <buffer> <silent> <F11>
+                    \ :call <SID>echoIndentList()<cr>
         noremap <script> <buffer> <silent> <F12>
                     \ :call <SID>echoBox()<cr>
     endif
@@ -233,12 +232,20 @@ function! GetIndentFold(lnum)
 
     if b:anyfold_doculines[a:lnum]
         if g:anyfold_docu_fold
-            return b:anyfold_indent_list[a:lnum] + 1
+            " introduce artifical fold for docuboxes
+            return max([b:anyfold_indent_list[a:lnum] + 1, 2])
         else
             return -1
         endif
     endif
 
+    if a:lnum == 1
+        let prevprev_indent = 0
+    else
+        let prevprev_indent = b:anyfold_indent_list[a:lnum-2]
+    endif
+
+    let prev_indent = b:anyfold_indent_list[a:lnum-1]
     let this_indent = b:anyfold_indent_list[a:lnum]
 
     if a:lnum == len(b:anyfold_indent_list)-1
@@ -246,6 +253,20 @@ function! GetIndentFold(lnum)
     endif
 
     let next_indent = b:anyfold_indent_list[a:lnum+1]
+
+    " heuristics to define blocks at foldlevel 0
+    if this_indent == 0
+        if prev_indent == 0 && prevprev_indent > 0
+            return '>1'
+        elseif next_indent > 0
+            return '>1'
+        elseif prev_indent > 0
+            return 0
+        else
+            return 1
+        endif
+    endif
+
     if next_indent <= this_indent
         return this_indent
     else
@@ -274,6 +295,10 @@ endfunction
 
 function! s:echoLineIndent()
     echo GetIndentFold(line('.'))
+endfunction
+
+function! s:echoIndentList()
+    echo b:anyfold_indent_list[line('.')]
 endfunction
 
 function! s:echoBox()
