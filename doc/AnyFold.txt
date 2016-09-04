@@ -114,7 +114,7 @@ anyfold_equalprg      | External executable for equalprg
 anyfold_equalprg_args | Arguments for external equalprg
 anyfold_toggle_key    | Key to toggle folds
 anyfold_motion        | Map motion commands (|AnyFoldMotion|)
-anyfold_auto_reload   | Automatically reload folds on write
+anyfold_auto_reload   | Automatically update folds
 anyfold_docu_fold     | Fold documentation boxes (experimental)
 
 Option                | Type    | Default value               *AnyFoldDefaults*

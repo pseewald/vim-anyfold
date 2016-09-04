@@ -45,8 +45,10 @@ function anyfold#init(comment_sym)
         autocmd ShellFilterPost * :call s:PostEqualprg()
     endif
 
+    let b:anyfold_numlines = line('$')
+
     let s:comment_sym = a:comment_sym
-    let b:anyfold_indent_list = s:GetIndentList()
+    let b:anyfold_indent_list = s:InitIndentList()
     lockvar! b:anyfold_indent_list
     let b:anyfold_doculines = s:GetDocuBoxes()
     lockvar! b:anyfold_doculines
@@ -60,12 +62,16 @@ function anyfold#init(comment_sym)
         setlocal foldtext=MinimalFoldText()
     endif
 
-    exe 'noremap <script> <buffer> <silent>' g:anyfold_toggle_key
-                    \' :call <SID>ToggleFolds()<cr>'
-
     if g:anyfold_auto_reload
-        autocmd BufWritePost * :call s:ReloadFolds()
+        let s:foldcmd_reload = ['zc', 'zC', 'za', 'zA', 'zx', 'zX', 'zm', 'zM', '[z', ']z', 'zj', 'zk']
+        for s:cmd in s:foldcmd_reload
+            exe 'noremap <buffer> <silent> '.s:cmd.' :call <SID>ReloadFolds(0)<cr>'.s:cmd
+        endfor
+        autocmd BufWritePre * :call s:ReloadFolds(1)
     endif
+
+    exe 'noremap <script> <buffer> <silent> '.g:anyfold_toggle_key.
+                    \' :call <SID>ToggleFolds()<cr>'
 
     if g:anyfold_motion
         noremap <script> <buffer> <silent> ]]
@@ -149,7 +155,7 @@ function! s:PrevNonBlankLine(lnum)
 endfunction
 
 " get indent hierarchy from actual indents
-function! s:GetIndentList()
+function! s:InitIndentList()
 
     " get list of actual indents (ind_list)
     let numlines = line('$')
@@ -283,14 +289,19 @@ function! s:ToggleFolds()
    endif
 endfunction
 
-function! s:ReloadFolds()
-    unlockvar! b:anyfold_indent_list
-    let b:anyfold_indent_list = s:GetIndentList()
-    lockvar! b:anyfold_indent_list
-    unlockvar! b:anyfold_doculines
-    let b:anyfold_doculines = s:GetDocuBoxes()
-    lockvar! b:anyfold_doculines
-    setlocal foldexpr=GetIndentFold(v:lnum)
+function! s:ReloadFolds(force)
+    if &modified
+        if a:force || line('$') != b:anyfold_numlines
+            let b:anyfold_numlines = line('$')
+            unlockvar! b:anyfold_indent_list
+            let b:anyfold_indent_list = s:InitIndentList()
+            lockvar! b:anyfold_indent_list
+            unlockvar! b:anyfold_doculines
+            let b:anyfold_doculines = s:GetDocuBoxes()
+            lockvar! b:anyfold_doculines
+            setlocal foldexpr=GetIndentFold(v:lnum)
+        endif
+    endif
 endfunction
 
 function! s:echoLineIndent()
@@ -345,11 +356,11 @@ function! s:JumpFoldStart(visual)
     endif
     let curr_ind = b:anyfold_indent_list[line('.')]
     if b:anyfold_indent_list[line('.')-1] < b:anyfold_indent_list[line('.')]
-        normal! j
+        normal j
     endif
-    normal! k[z0
+    normal k[z0
     while b:anyfold_indent_list[line('.')] > curr_ind
-        normal! [z0
+        normal [z0
     endwhile
 endfunction
 
@@ -361,13 +372,13 @@ function! s:JumpFoldEnd(visual)
         return
     endif
     if b:anyfold_indent_list[line('.')+1] < b:anyfold_indent_list[line('.')]
-        normal! k
+        normal k
     endif
     let curr_ind = b:anyfold_indent_list[line('.')]
-    normal! ]zj0
+    normal ]zj0
     while b:anyfold_indent_list[line('.')] > curr_ind
            \ && line('.') < line('$')
-        normal! ]zj0
+        normal ]zj0
     endwhile
 endfunction
 

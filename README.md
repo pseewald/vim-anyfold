@@ -56,7 +56,7 @@ It has the following shortcomings:
     ```
 
     or choose a higher value to open some or all folds.
-5. You have successfully set up AnyFold and you are ready to try it out. For most cases, using the spacebar to toggle folds is the most convenient way of dealing with folds. Note that this always recursively opens all folds under the cursor. If you don't like this, you can easily refold by placing the cursor somewhere inside the open fold and hitting "zx".
+5. You have successfully set up AnyFold and you are ready to try it out. For most cases, using the spacebar to toggle folds is the most convenient way of dealing with folds. Note that this always recursively opens all folds under the cursor. If you don't like this, you can easily refold by placing the cursor somewhere inside the open fold and hitting `zx`.
 6. Use the key combinations `[[` and `]]` to navigate to the beginning and end of the current block. Use `]k` and `[j` to navigate to the end of the previous block and to the beginning of the next block.
 7. In order to quickly fix indentation when needed, you can either use Vim's integrated `equalprg`, or set up an external autoindenter with AnyFold by
 
@@ -111,7 +111,7 @@ Option | Values | Default value |  Description
 `anyfold_equalprg_args` | string | filetype specific | Arguments for external equalprg
 `anyfold_toggle_key` | string | '\<space\>' | Key to toggle folds
 `anyfold_motion` | 0, 1 | 1 | Map motion commands to `[[`, `]]`, `[j`, `]k`
-`anyfold_auto_reload` | 0, 1 | 1 | Automatically reload folds on write
+`anyfold_auto_reload` | 0, 1 | 1 | Automatically update folds
 `anyfold_docu_fold` | 0, 1 | 0 | Fold documentation boxes (experimental)
 
 
