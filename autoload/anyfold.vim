@@ -66,6 +66,7 @@ function anyfold#init(comment_sym)
         let s:foldcmd_reload = ['zc', 'zC', 'za', 'zA', 'zx', 'zX', 'zm', 'zM', '[z', ']z', 'zj', 'zk']
         for s:cmd in s:foldcmd_reload
             exe 'noremap <buffer> <silent> '.s:cmd.' :call <SID>ReloadFolds(0)<cr>'.s:cmd
+            exe 'vnoremap <buffer> <silent> '.s:cmd.' :<c-u>call <SID>ReloadFolds(0)<cr>gv'.s:cmd
         endfor
         autocmd BufWritePre * :call s:ReloadFolds(1)
     endif
