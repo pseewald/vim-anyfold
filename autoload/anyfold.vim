@@ -284,9 +284,10 @@ endfunction
 
 function! s:ToggleFolds()
    if foldclosed(line('.')) != -1
-       normal zO
+       normal! zO
    elseif foldlevel('.') != 0
-       normal zc
+       call s:ReloadFolds(0)
+       normal! zc
    endif
 endfunction
 
@@ -346,6 +347,7 @@ endfunction
 " FIXME: implementation based on existing move commands is hackish
 "----------------------------------------------------------------------------/
 function! s:JumpFoldStart(visual)
+    call s:ReloadFolds(0)
     if a:visual
         normal! gv
     endif
@@ -357,15 +359,16 @@ function! s:JumpFoldStart(visual)
     endif
     let curr_ind = b:anyfold_indent_list[line('.')]
     if b:anyfold_indent_list[line('.')-1] < b:anyfold_indent_list[line('.')]
-        normal j
+        normal! j
     endif
-    normal k[z0
+    normal! k[z0
     while b:anyfold_indent_list[line('.')] > curr_ind
-        normal [z0
+        normal! [z0
     endwhile
 endfunction
 
 function! s:JumpFoldEnd(visual)
+    call s:ReloadFolds(0)
     if a:visual
         normal! gv
     endif
@@ -373,17 +376,18 @@ function! s:JumpFoldEnd(visual)
         return
     endif
     if b:anyfold_indent_list[line('.')+1] < b:anyfold_indent_list[line('.')]
-        normal k
+        normal! k
     endif
     let curr_ind = b:anyfold_indent_list[line('.')]
-    normal ]zj0
+    normal! ]zj0
     while b:anyfold_indent_list[line('.')] > curr_ind
            \ && line('.') < line('$')
-        normal ]zj0
+        normal! ]zj0
     endwhile
 endfunction
 
 function! s:JumpPrevFoldEnd(visual)
+    call s:ReloadFolds(0)
     if a:visual
         normal! gv
     endif
@@ -391,6 +395,7 @@ function! s:JumpPrevFoldEnd(visual)
 endfunction
 
 function! s:JumpNextFoldStart(visual)
+    call s:ReloadFolds(0)
     if a:visual
         normal! gv
     endif
