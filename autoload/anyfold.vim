@@ -246,12 +246,6 @@ function! GetIndentFold(lnum)
         endif
     endif
 
-    if a:lnum == 1
-        let prevprev_indent = 0
-    else
-        let prevprev_indent = b:anyfold_indent_list[a:lnum-2]
-    endif
-
     let prev_indent = b:anyfold_indent_list[a:lnum-1]
     let this_indent = b:anyfold_indent_list[a:lnum]
 
@@ -260,6 +254,12 @@ function! GetIndentFold(lnum)
     endif
 
     let next_indent = b:anyfold_indent_list[a:lnum+1]
+
+    if a:lnum == 1
+        let prevprev_indent = 0
+    else
+        let prevprev_indent = b:anyfold_indent_list[a:lnum-2]
+    endif
 
     " heuristics to define blocks at foldlevel 0
     if this_indent == 0
@@ -344,27 +344,34 @@ endfunction
 
 "----------------------------------------------------------------------------/
 " Motion
-" FIXME: implementation based on existing move commands is hackish
 "----------------------------------------------------------------------------/
 function! s:JumpFoldStart(visual)
     call s:ReloadFolds(0)
     if a:visual
         normal! gv
     endif
+
     if line('.') == 1
+        call cursor(1,1)
         return
     endif
-    if foldlevel('.') == 0 || foldlevel(line('.')-1) == 0
-        return
+
+    let curr_line = line('.')-1
+    let curr_foldlevel=b:anyfold_indent_list[line('.')]
+
+    if b:anyfold_indent_list[curr_line] == curr_foldlevel
+        let curr_foldlevel += -1
     endif
-    let curr_ind = b:anyfold_indent_list[line('.')]
-    if b:anyfold_indent_list[line('.')-1] < b:anyfold_indent_list[line('.')]
-        normal! j
-    endif
-    normal! k[z0
-    while b:anyfold_indent_list[line('.')] > curr_ind
-        normal! [z0
+
+    while b:anyfold_indent_list[curr_line] > curr_foldlevel
+        if curr_line == 1
+            break
+        endif
+        let curr_line += -1
     endwhile
+
+    call cursor(curr_line,1)
+
 endfunction
 
 function! s:JumpFoldEnd(visual)
@@ -372,18 +379,28 @@ function! s:JumpFoldEnd(visual)
     if a:visual
         normal! gv
     endif
+
     if line('.') == line('$')
+        call cursor(line('$'),1)
         return
     endif
-    if b:anyfold_indent_list[line('.')+1] < b:anyfold_indent_list[line('.')]
-        normal! k
+
+    let curr_line = line('.')+1
+    let curr_foldlevel=b:anyfold_indent_list[line('.')]
+
+    if b:anyfold_indent_list[curr_line] == curr_foldlevel
+        let curr_foldlevel += -1
     endif
-    let curr_ind = b:anyfold_indent_list[line('.')]
-    normal! ]zj0
-    while b:anyfold_indent_list[line('.')] > curr_ind
-           \ && line('.') < line('$')
-        normal! ]zj0
+
+    while b:anyfold_indent_list[curr_line] > curr_foldlevel
+        if curr_line == line('$')
+            break
+        endif
+        let curr_line += 1
     endwhile
+
+    call cursor(curr_line,1)
+
 endfunction
 
 function! s:JumpPrevFoldEnd(visual)
