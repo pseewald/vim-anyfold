@@ -1,5 +1,4 @@
 " AnyFold plugin
-
 "----------------------------------------------------------------------------/
 " Activation of requested features
 "----------------------------------------------------------------------------/
@@ -246,7 +245,6 @@ function! GetIndentFold(lnum)
         endif
     endif
 
-    let prev_indent = b:anyfold_indent_list[a:lnum-1]
     let this_indent = b:anyfold_indent_list[a:lnum]
 
     if a:lnum == len(b:anyfold_indent_list)-1
@@ -255,22 +253,39 @@ function! GetIndentFold(lnum)
 
     let next_indent = b:anyfold_indent_list[a:lnum+1]
 
-    if a:lnum == 1
-        let prevprev_indent = 0
-    else
-        let prevprev_indent = b:anyfold_indent_list[a:lnum-2]
-    endif
-
     " heuristics to define blocks at foldlevel 0
     if this_indent == 0
-        if prev_indent == 0 && prevprev_indent > 0
+
+        let prev_indent = b:anyfold_indent_list[a:lnum-1]
+
+        if a:lnum == 1
+            let prevprev_indent = 0
+        else
+            let prevprev_indent = b:anyfold_indent_list[a:lnum-2]
+        endif
+
+        if a:lnum >= line('$') - 1
+            let nextnext_indent = 0
+        else
+            let nextnext_indent = b:anyfold_indent_list[a:lnum+2]
+        endif
+
+        if next_indent > 0
             return '>1'
-        elseif next_indent > 0
-            return '>1'
-        elseif prev_indent > 0
+        endif
+
+        if prev_indent > 0
             return 0
         else
-            return 1
+            if prevprev_indent > 0
+                if next_indent == 0 && nextnext_indent == 0
+                    return '>1'
+                else
+                    return 0
+                endif
+            else
+                return 1
+            endif
         endif
     endif
 
