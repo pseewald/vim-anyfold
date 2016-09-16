@@ -8,18 +8,8 @@ function anyfold#init()
         return
     endif
 
-    if !exists("b:anyfold_equalprg")
-        let b:anyfold_equalprg = ''
-    endif
-
-    if !exists("b:anyfold_equalprg_args")
-        let b:anyfold_equalprg_args = ''
-    endif
-
     if !exists('g:_ANYFOLD_DEFAULTS')
         let g:_ANYFOLD_DEFAULTS = {
-                    \ 'equalprg':                     b:anyfold_equalprg,
-                    \ 'equalprg_args':                b:anyfold_equalprg_args,
                     \ 'fold_comments':                0,
                     \ 'fold_display':                 1,
                     \ 'motion':                       1,
@@ -35,14 +25,6 @@ function anyfold#init()
             let g:anyfold_{s:key} = copy(g:_ANYFOLD_DEFAULTS[s:key])
         endif
     endfor
-
-    if executable(g:anyfold_equalprg)
-        exe 'setlocal equalprg='.fnameescape(g:anyfold_equalprg.' '.g:anyfold_equalprg_args)
-        " need to do some cleanup work in case equalprg fails
-        " vim has a really bad default solution here (replace text to be
-        " formatted by error message)
-        autocmd ShellFilterPost * :call s:PostEqualprg()
-    endif
 
     let b:anyfold_numlines = line('$')
 
@@ -111,17 +93,6 @@ function anyfold#init()
     let b:anyfold_initialised = 1
     doautocmd User AnyFoldLoaded
 endfunction
-
-"----------------------------------------------------------------------------/
-" Cleanup incase equalprg failed
-"----------------------------------------------------------------------------/
-function! s:PostEqualprg()
-   if v:shell_error == 1
-       silent normal! u
-       echoerr 'external equalprg failed with an error'
-   endif
-endfunction
-
 
 function! s:CommentLine(lnum)
     " comments and preprocessor statements
