@@ -10,9 +10,4 @@ elseif !g:anyfold_activate
     finish
 endif
 
-let s:comment_sym = ''
-
-" ftplugin will delete this augroup if it exists
-augroup fallback
-au BufEnter * call anyfold#init(s:comment_sym)
-augroup end
+au BufEnter * call anyfold#init()

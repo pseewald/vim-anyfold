@@ -2,7 +2,7 @@
 "----------------------------------------------------------------------------/
 " Activation of requested features
 "----------------------------------------------------------------------------/
-function anyfold#init(comment_sym)
+function anyfold#init()
 
     if exists("b:anyfold_initialised")
         return
@@ -20,7 +20,7 @@ function anyfold#init(comment_sym)
         let g:_ANYFOLD_DEFAULTS = {
                     \ 'equalprg':                     b:anyfold_equalprg,
                     \ 'equalprg_args':                b:anyfold_equalprg_args,
-                    \ 'docu_fold':                    0,
+                    \ 'fold_comments':                0,
                     \ 'fold_display':                 1,
                     \ 'motion':                       1,
                     \ 'toggle_key':                   '<space>',
@@ -46,11 +46,8 @@ function anyfold#init(comment_sym)
 
     let b:anyfold_numlines = line('$')
 
-    let s:comment_sym = a:comment_sym
     let b:anyfold_indent_list = s:InitIndentList()
     lockvar! b:anyfold_indent_list
-    let b:anyfold_doculines = s:GetDocuBoxes()
-    lockvar! b:anyfold_doculines
 
     if !&diff
         setlocal foldmethod=expr
@@ -100,6 +97,8 @@ function anyfold#init(comment_sym)
     endif
 
     if g:anyfold_debug
+        noremap <script> <buffer> <silent> <F9>
+                    \ :echom <SID>CommentLine(line('.'))<cr>
         noremap <script> <buffer> <silent> <F10>
                     \ :call <SID>echoLineIndent()<cr>
         noremap <script> <buffer> <silent> <F11>
@@ -122,6 +121,13 @@ function! s:PostEqualprg()
    endif
 endfunction
 
+
+function! s:CommentLine(lnum)
+    " comments and preprocessor statements
+    return synIDattr(synIDtrans(synID(a:lnum,indent(a:lnum)+1,1)),"name") =~? 'Comment'
+           \ || getline(a:lnum)[0] == '#'
+endfunction
+
 "----------------------------------------------------------------------------/
 " Folding
 "----------------------------------------------------------------------------/
@@ -130,7 +136,7 @@ function! s:NextNonBlankLine(lnum)
     let current = a:lnum + 1
 
     while current <= numlines
-        if getline(current) =~? '\v\S' && getline(current) !~? '\v^['.s:comment_sym.'#]'
+        if getline(current) =~? '\v\S' && !s:CommentLine(current)
             return current
         endif
 
@@ -144,7 +150,7 @@ function! s:PrevNonBlankLine(lnum)
     let current = a:lnum - 1
 
     while current > 0
-        if getline(current) =~? '\v\S' && getline(current) !~? '\v^['.s:comment_sym.'#]'
+        if getline(current) =~? '\v\S' && !s:CommentLine(current)
             return current
         endif
 
@@ -164,7 +170,7 @@ function! s:InitIndentList()
     while current <= numlines
         let prev_indent = indent(s:PrevNonBlankLine(current))
         let next_indent = indent(s:NextNonBlankLine(current))
-        if getline(current) =~? '\v\S' && getline(current) !~? '\v^['.s:comment_sym.'#]'
+        if getline(current) =~? '\v\S' && !s:CommentLine(current)
             let ind_list += [indent(current)]
         else
             let ind_list += [max([prev_indent,next_indent])]
@@ -203,41 +209,10 @@ function! s:InitIndentList()
     return hierind_list
 endfunction
 
-function! s:GetDocuBoxes()
-    let numlines = line('$')
-    let doculines=[]
-    let current=0
-    let inbox =0
-
-    while current <= numlines
-        let doculines += [0]
-        if exists("b:anyfold_docubox_mark")
-            if !empty(matchstr(getline(current),'^\s*'.b:anyfold_docubox_mark))
-                let doculines[-1] = 1
-            endif
-        elseif exists("b:anyfold_docubox_start") && exists("b:anyfold_docubox_end")
-            if !inbox
-                if !empty(matchstr(getline(current),'^\s*'.b:anyfold_docubox_start))
-                    let doculines[-1] = 1
-                    let inbox=1
-                endif
-            else
-                let doculines[-1] = 1
-                if !empty(matchstr(getline(current),'^\s*'.b:anyfold_docubox_end))
-                    let inbox=0
-                endif
-            endif
-        endif
-        let current += 1
-    endwhile
-
-    return doculines
-endfunction
-
 function! GetIndentFold(lnum)
 
-    if b:anyfold_doculines[a:lnum]
-        if g:anyfold_docu_fold
+    if s:CommentLine(a:lnum)
+        if g:anyfold_fold_comments
             " introduce artifical fold for docuboxes
             return max([b:anyfold_indent_list[a:lnum] + 1, 2])
         else
@@ -313,24 +288,17 @@ function! s:ReloadFolds(force)
             unlockvar! b:anyfold_indent_list
             let b:anyfold_indent_list = s:InitIndentList()
             lockvar! b:anyfold_indent_list
-            unlockvar! b:anyfold_doculines
-            let b:anyfold_doculines = s:GetDocuBoxes()
-            lockvar! b:anyfold_doculines
             setlocal foldexpr=GetIndentFold(v:lnum)
         endif
     endif
 endfunction
 
 function! s:echoLineIndent()
-    echo GetIndentFold(line('.'))
+    echom GetIndentFold(line('.'))
 endfunction
 
 function! s:echoIndentList()
-    echo b:anyfold_indent_list[line('.')]
-endfunction
-
-function! s:echoBox()
-    echo b:anyfold_doculines[line('.')]
+    echom b:anyfold_indent_list[line('.')]
 endfunction
 
 "----------------------------------------------------------------------------/
@@ -340,7 +308,8 @@ endfunction
 "----------------------------------------------------------------------------/
 function! MinimalFoldText()
     let fs = v:foldstart
-    while getline(fs) =~ '^\s*$' | let fs = nextnonblank(fs + 1)
+    while getline(fs) !~ '\w'
+        let fs = nextnonblank(fs + 1)
     endwhile
     if fs > v:foldend
         let line = getline(v:foldstart)
