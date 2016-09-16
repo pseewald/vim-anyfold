@@ -10,6 +10,7 @@ function anyfold#init()
 
     if !exists('g:_ANYFOLD_DEFAULTS')
         let g:_ANYFOLD_DEFAULTS = {
+                    \ 'identify_comments':            0,
                     \ 'fold_comments':                0,
                     \ 'fold_display':                 1,
                     \ 'motion':                       1,
@@ -25,11 +26,16 @@ function anyfold#init()
             let g:anyfold_{s:key} = copy(g:_ANYFOLD_DEFAULTS[s:key])
         endif
     endfor
+    if g:anyfold_fold_comments
+        let g:anyfold_identify_comments = 1
+    endif
 
     let b:anyfold_numlines = line('$')
 
-    let b:anyfold_commentlines = s:MarkCommentLines()
-    lockvar! b:anyfold_commentlines
+    if g:anyfold_identify_comments
+        let b:anyfold_commentlines = s:MarkCommentLines()
+        lockvar! b:anyfold_commentlines
+    endif
 
     let b:anyfold_indent_list = s:InitIndentList()
     lockvar! b:anyfold_indent_list
@@ -102,6 +108,14 @@ function! s:CommentLine(lnum)
            \ || getline(a:lnum)[0] == '#'
 endfunction
 
+function! s:IsComment(lnum)
+    if g:anyfold_identify_comments
+        return b:anyfold_commentlines[a:lnum]
+    else
+        return 0
+    endif
+endfunction
+
 "----------------------------------------------------------------------------/
 " Folding
 "----------------------------------------------------------------------------/
@@ -110,8 +124,7 @@ function! s:NextNonBlankLine(lnum)
     let current = a:lnum + 1
 
     while current <= numlines
-        if getline(current) =~? '\v\S' && !b:anyfold_commentlines[current]
-
+        if getline(current) =~? '\v\S' && !s:IsComment(current)
             return current
         endif
 
@@ -125,7 +138,7 @@ function! s:PrevNonBlankLine(lnum)
     let current = a:lnum - 1
 
     while current > 0
-        if getline(current) =~? '\v\S' && !b:anyfold_commentlines[current]
+        if getline(current) =~? '\v\S' && !s:IsComment(current)
             return current
         endif
 
@@ -145,7 +158,7 @@ function! s:InitIndentList()
     while current <= numlines
         let prev_indent = indent(s:PrevNonBlankLine(current))
         let next_indent = indent(s:NextNonBlankLine(current))
-        if getline(current) =~? '\v\S' && !b:anyfold_commentlines[current]
+        if getline(current) =~? '\v\S' && !s:IsComment(current)
             let ind_list += [indent(current)]
         else
             let ind_list += [max([prev_indent,next_indent])]
@@ -198,15 +211,12 @@ function! s:MarkCommentLines()
     return commentlines
 endfunction
 
-
 function! GetIndentFold(lnum)
 
-    if b:anyfold_commentlines[a:lnum]
+    if s:IsComment(a:lnum)
         if g:anyfold_fold_comments
             " introduce artifical fold for docuboxes
             return max([b:anyfold_indent_list[a:lnum] + 1, 2])
-        else
-            return -1
         endif
     endif
 
@@ -263,21 +273,26 @@ function! GetIndentFold(lnum)
 endfunction
 
 function! s:ToggleFolds()
-   if foldclosed(line('.')) != -1
-       normal! zO
-   elseif foldlevel('.') != 0
-       call s:ReloadFolds(0)
-       normal! zc
-   endif
+    if foldclosed(line('.')) != -1
+        normal! zO
+    elseif foldlevel('.') != 0
+        if g:anyfold_auto_reload
+            call s:ReloadFolds(0)
+        endif
+        normal! zc
+    endif
 endfunction
 
 function! s:ReloadFolds(force)
     if &modified
         if a:force || line('$') != b:anyfold_numlines
             let b:anyfold_numlines = line('$')
-            unlockvar! b:anyfold_commentlines
-            let b:anyfold_commentlines = s:MarkCommentLines()
-            lockvar! b:anyfold_commentlines
+
+            if g:anyfold_identify_comments
+                unlockvar! b:anyfold_commentlines
+                let b:anyfold_commentlines = s:MarkCommentLines()
+                lockvar! b:anyfold_commentlines
+            endif
 
             unlockvar! b:anyfold_indent_list
             let b:anyfold_indent_list = s:InitIndentList()
@@ -325,7 +340,9 @@ endfunction
 " Motion
 "----------------------------------------------------------------------------/
 function! s:JumpFoldStart(visual)
-    call s:ReloadFolds(0)
+    if g:anyfold_auto_reload
+        call s:ReloadFolds(0)
+    endif
     if a:visual
         normal! gv
     endif
@@ -354,7 +371,9 @@ function! s:JumpFoldStart(visual)
 endfunction
 
 function! s:JumpFoldEnd(visual)
-    call s:ReloadFolds(0)
+    if g:anyfold_auto_reload
+        call s:ReloadFolds(0)
+    endif
     if a:visual
         normal! gv
     endif
@@ -383,7 +402,9 @@ function! s:JumpFoldEnd(visual)
 endfunction
 
 function! s:JumpPrevFoldEnd(visual)
-    call s:ReloadFolds(0)
+    if g:anyfold_auto_reload
+        call s:ReloadFolds(0)
+    endif
     if a:visual
         normal! gv
     endif
@@ -391,7 +412,9 @@ function! s:JumpPrevFoldEnd(visual)
 endfunction
 
 function! s:JumpNextFoldStart(visual)
-    call s:ReloadFolds(0)
+    if g:anyfold_auto_reload
+        call s:ReloadFolds(0)
+    endif
     if a:visual
         normal! gv
     endif

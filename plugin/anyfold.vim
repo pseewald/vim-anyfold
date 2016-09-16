@@ -1,8 +1,7 @@
-" This is the filetype independent fallback plugin, it will be overridden by ftplugin if it exists
-if exists("b:loaded_anyfold_fallback")
+if exists("b:loaded_anyfold")
     finish
 endif
-let b:loaded_anyfold_fallback = 1
+let b:loaded_anyfold = 1
 
 if !exists("g:anyfold_activate")
     finish

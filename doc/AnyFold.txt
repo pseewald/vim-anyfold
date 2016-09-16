@@ -32,10 +32,10 @@ such as comments, empty lines and varying indentation widths.
 AnyFold needs to be activated by adding one line to your vimrc:
 
 * AnyFold active for all filetypes
-    let anyfold_activate=1
+    let g:anyfold_activate=1
 
 * AnyFold active for a specific filetype
-    autocmd Filetype <your-filetype> let anyfold_activate=1
+    autocmd Filetype <your-filetype> let g:anyfold_activate=1
 
 For dealing with folds in general, see |fold-commands|, |fold-options| and
 |fold-behavior|. Additionally, AnyFold defines the following mappings:
@@ -56,6 +56,14 @@ and the last line of a block as the next line after the last line in a fold.
 Since AnyFold can not correctly fold mismatched indentation, auto-indenting
 is highly recommended. See |equalprg|.
 
+                                                              *AnyFoldComments*
+If comments are left unindented, indent folding produces bogus results. In this
+case you need to set
+    let g:anyfold_identify_comments = 1
+
+such that comments are identified and ignored. Note that this feature may lead
+to slow performance for large files.
+
 ==============================================================================
 3. Configuration and Options                            *AnyFoldConfiguration*
                                                              *AnyFoldOptions*
@@ -66,21 +74,23 @@ options. These can be set either globally
 or filetype specific
     autocmd Filetype <filetype> let <option>=<value>
 
-Option                | Description
+Option                      | Description
 ----------------------------------------------------------------------
-anyfold_fold_display  | Minimalistic display of closed folds
-anyfold_toggle_key    | Key to toggle folds
-anyfold_motion        | Map motion commands (|AnyFoldMotion|)
-anyfold_auto_reload   | Automatically update folds
-anyfold_fold_comments | Fold multiline comments
+g:anyfold_fold_display      | Minimalistic display of closed folds
+g:anyfold_toggle_key        | Key to toggle folds
+g:anyfold_motion            | Map motion commands (|AnyFoldMotion|)
+g:anyfold_auto_reload       | Automatically update folds
+g:anyfold_identify_comments | Identify (and ignore) comment lines
+g:anyfold_fold_comments     | Fold multiline comments
 
-Option                | Type    | Default value               *AnyFoldDefaults*
+Option                      | Type    | Default value               *AnyFoldDefaults*
 ----------------------------------------------------------------------
-anyfold_fold_display  | 0, 1    | 1 (= 'on')
-anyfold_toggle_key    | string  | '<Space>'
-anyfold_motion        | 0, 1    | 1 (= 'on')
-anyfold_auto_reload   | 0, 1    | 1 (= 'on')
-anyfold_fold_comments | 0, 1    | 0 (= 'off')
+g:anyfold_fold_display      | 0, 1    | 1 (= 'on')
+g:anyfold_toggle_key        | string  | '<Space>'
+g:anyfold_motion            | 0, 1    | 1 (= 'on')
+g:anyfold_auto_reload       | 0, 1    | 1 (= 'on')
+g:anyfold_identify_comments | 0, 1    | 0 (= 'off')
+g:anyfold_fold_comments     | 0, 1    | 0 (= 'off')
                                                               *AnyFoldLoaded*
 For expert configuration, AnyFold triggers an |autocmd-event| `AnyFoldLoaded`
 after initialisation. This enables user-defined initialisation steps such as
@@ -96,7 +106,7 @@ https://github.com/pseewald/AnyFold
 ==============================================================================
 5. Changelog                                                   *AnyFoldChangelog*
 
-v0.3 - third pre-release
+v0.3.1 - pre-release
 
 For full changelog, visit https://github.com/pseewald/AnyFold
 

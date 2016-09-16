@@ -44,22 +44,26 @@ It has the following shortcomings:
     ```vim
     autocmd Filetype <filetype> let anyfold_activate=1
     ```
-
 2. *Useful folding commands*: Using the spacebar to toggle folds is the most convenient way of dealing with folds. Note that this always recursively opens all folds under the cursor. You can easily refold by placing the cursor somewhere inside the open fold and hitting `zx`. Open all folds with `zR`.
 3. *Fold display*: AnyFold's minimalistic display of closed fold assumes that folds are highlighted by your color scheme. If that is not the case, consider installing a suitable color scheme or highlight folds yourself by a command similar to
 
     ```vim
     hi Folded term=underline
     ```
+4. *Comments*: If comments are left unindented, indent folding produces bogus results. In this case you need to set
+    ```vim
+    let anyfold_identify_comments = 1
+    ```
+    such that comments are identified and ignored. Note that this feature may lead to slow performance for large files.
 
-4. For expert configuration, AnyLoad triggers an event `AnyFoldLoaded` after initialisation. This enables user-defined startup steps such as
+5. *Customization*: For expert configuration, AnyLoad triggers an event `AnyFoldLoaded` after initialisation. This enables user-defined startup steps such as
 
     ```vim
     autocmd User AnyFoldLoaded normal zv
     ```
 
    which unfolds the line in which the cursor is located when opening a file.
-5. For more detailed instructions and information, read the included vim doc `:h AnyFold`.
+6. *Documentation*: For more detailed instructions and information, read the included vim doc `:h AnyFold`.
 
 
 ## Options
@@ -82,6 +86,7 @@ Option | Values | Default value |  Description
 `anyfold_toggle_key` | string | '\<space\>' | Key to toggle folds
 `anyfold_motion` | 0, 1 | 1 | Map motion commands to `[[`, `]]`, `[j`, `]k`
 `anyfold_auto_reload` | 0, 1 | 1 | Automatically update folds
+`anyfold_identify_comments` | 0, 1 | 0 | Identify (and ignore) comment lines
 `anyfold_fold_comments` | 0, 1 | 0 | Fold multiline comments
 
 
