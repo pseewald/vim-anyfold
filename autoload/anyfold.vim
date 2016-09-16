@@ -46,6 +46,9 @@ function anyfold#init()
 
     let b:anyfold_numlines = line('$')
 
+    let b:anyfold_commentlines = s:MarkCommentLines()
+    lockvar! b:anyfold_commentlines
+
     let b:anyfold_indent_list = s:InitIndentList()
     lockvar! b:anyfold_indent_list
 
@@ -103,8 +106,6 @@ function anyfold#init()
                     \ :call <SID>echoLineIndent()<cr>
         noremap <script> <buffer> <silent> <F11>
                     \ :call <SID>echoIndentList()<cr>
-        noremap <script> <buffer> <silent> <F12>
-                    \ :call <SID>echoBox()<cr>
     endif
 
     let b:anyfold_initialised = 1
@@ -124,7 +125,9 @@ endfunction
 
 function! s:CommentLine(lnum)
     " comments and preprocessor statements
-    return synIDattr(synIDtrans(synID(a:lnum,indent(a:lnum)+1,1)),"name") =~? 'Comment'
+    " FIXME: while this is conceptually the right approach, synID is so very slow.
+    " Alternative is parsing of comments string (see :h comments).
+    return synIDattr(synID(a:lnum,indent(a:lnum)+1,1),"name") =~? 'Comment'
            \ || getline(a:lnum)[0] == '#'
 endfunction
 
@@ -136,7 +139,8 @@ function! s:NextNonBlankLine(lnum)
     let current = a:lnum + 1
 
     while current <= numlines
-        if getline(current) =~? '\v\S' && !s:CommentLine(current)
+        if getline(current) =~? '\v\S' && !b:anyfold_commentlines[current]
+
             return current
         endif
 
@@ -150,7 +154,7 @@ function! s:PrevNonBlankLine(lnum)
     let current = a:lnum - 1
 
     while current > 0
-        if getline(current) =~? '\v\S' && !s:CommentLine(current)
+        if getline(current) =~? '\v\S' && !b:anyfold_commentlines[current]
             return current
         endif
 
@@ -170,7 +174,7 @@ function! s:InitIndentList()
     while current <= numlines
         let prev_indent = indent(s:PrevNonBlankLine(current))
         let next_indent = indent(s:NextNonBlankLine(current))
-        if getline(current) =~? '\v\S' && !s:CommentLine(current)
+        if getline(current) =~? '\v\S' && !b:anyfold_commentlines[current]
             let ind_list += [indent(current)]
         else
             let ind_list += [max([prev_indent,next_indent])]
@@ -209,9 +213,24 @@ function! s:InitIndentList()
     return hierind_list
 endfunction
 
+function! s:MarkCommentLines()
+    let numlines = line('$')
+    let commentlines = []
+    let current = 0
+    while current <= numlines
+        let commentlines += [0]
+        if s:CommentLine(current)
+            let commentlines[-1] = 1
+        endif
+        let current += 1
+    endwhile
+    return commentlines
+endfunction
+
+
 function! GetIndentFold(lnum)
 
-    if s:CommentLine(a:lnum)
+    if b:anyfold_commentlines[a:lnum]
         if g:anyfold_fold_comments
             " introduce artifical fold for docuboxes
             return max([b:anyfold_indent_list[a:lnum] + 1, 2])
@@ -285,9 +304,14 @@ function! s:ReloadFolds(force)
     if &modified
         if a:force || line('$') != b:anyfold_numlines
             let b:anyfold_numlines = line('$')
+            unlockvar! b:anyfold_commentlines
+            let b:anyfold_commentlines = s:MarkCommentLines()
+            lockvar! b:anyfold_commentlines
+
             unlockvar! b:anyfold_indent_list
             let b:anyfold_indent_list = s:InitIndentList()
             lockvar! b:anyfold_indent_list
+
             setlocal foldexpr=GetIndentFold(v:lnum)
         endif
     endif
