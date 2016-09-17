@@ -37,11 +37,11 @@ It has the following shortcomings:
 
 Examples were recorded using
 
-    ```vim
-    let anyfold_fold_comments=1
-    colorscheme solarized
-    hi Folded term=NONE cterm=NONE
-    ```
+```vim
+let anyfold_fold_comments=1
+colorscheme solarized
+hi Folded term=NONE cterm=NONE
+```
 
 
 ## Setup and usage
