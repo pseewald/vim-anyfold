@@ -57,7 +57,7 @@ Since AnyFold can not correctly fold mismatched indentation, auto-indenting
 is highly recommended. See |equalprg|.
 
                                                               *AnyFoldComments*
-If comments are left unindented, indent folding produces bogus results. In this
+If comments are left unindented, indent folding produces wrong results. In this
 case you need to set
     let g:anyfold_identify_comments = 1
 

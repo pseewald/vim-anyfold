@@ -50,11 +50,11 @@ It has the following shortcomings:
     ```vim
     hi Folded term=underline
     ```
-4. *Comments*: If comments are left unindented, indent folding produces bogus results. In this case you need to set
+4. *Comments*: If comments are left unindented, indent folding produces wrong results. In this case you need to set
     ```vim
     let anyfold_identify_comments = 1
     ```
-    such that comments are identified and ignored. Note that this feature may lead to slow performance for large files.
+    such that unindented comments are identified and ignored. Note that this feature may lead to slow performance for large files.
 
 5. *Customization*: For expert configuration, AnyLoad triggers an event `AnyFoldLoaded` after initialisation. This enables user-defined startup steps such as
 

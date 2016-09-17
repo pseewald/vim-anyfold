@@ -89,7 +89,7 @@ function anyfold#init()
 
     if g:anyfold_debug
         noremap <script> <buffer> <silent> <F9>
-                    \ :echom <SID>CommentLine(line('.'))<cr>
+                    \ :echom <SID>IsComment(line('.'))<cr>
         noremap <script> <buffer> <silent> <F10>
                     \ :call <SID>echoLineIndent()<cr>
         noremap <script> <buffer> <silent> <F11>
@@ -100,12 +100,16 @@ function anyfold#init()
     doautocmd User AnyFoldLoaded
 endfunction
 
-function! s:CommentLine(lnum)
-    " comments and preprocessor statements
-    " FIXME: while this is conceptually the right approach, synID is so very slow.
-    " Alternative is parsing of comments string (see :h comments).
-    return synIDattr(synID(a:lnum,indent(a:lnum)+1,1),"name") =~? 'Comment'
-           \ || getline(a:lnum)[0] == '#'
+function! s:CommentLine(lnum, force)
+    " unindented comments and preprocessor statements
+    " Note: synID is very slow, therefore we identify unindented comments only
+    " (or if force==1)
+    if indent(a:lnum) >= &sw && !a:force
+        return 0
+    else
+        return synIDattr(synID(a:lnum,indent(a:lnum)+1,1),"name") =~? 'Comment'
+               \ || getline(a:lnum)[0] == '#'
+    endif
 endfunction
 
 function! s:IsComment(lnum)
@@ -202,8 +206,16 @@ function! s:MarkCommentLines()
     let commentlines = []
     let current = 0
     while current <= numlines
+        " here we force identification of a comment line if it may belong to a
+        " multiline comment (in this case we can not assume that it is
+        " unindented)
+        if current > 0
+            let force = commentlines[-1]
+        else
+            let force = 0
+        endif
         let commentlines += [0]
-        if s:CommentLine(current)
+        if s:CommentLine(current, force)
             let commentlines[-1] = 1
         endif
         let current += 1
