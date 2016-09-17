@@ -2,7 +2,7 @@
 "----------------------------------------------------------------------------/
 " Activation of requested features
 "----------------------------------------------------------------------------/
-function anyfold#init()
+function anyfold#init() abort
 
     if exists("b:anyfold_initialised")
         return
@@ -100,7 +100,7 @@ function anyfold#init()
     doautocmd User AnyFoldLoaded
 endfunction
 
-function! s:CommentLine(lnum, force)
+function! s:CommentLine(lnum, force) abort
     " unindented comments and preprocessor statements
     " Note: synID is very slow, therefore we identify unindented comments only
     " (or if force==1)
@@ -112,9 +112,9 @@ function! s:CommentLine(lnum, force)
     endif
 endfunction
 
-function! s:IsComment(lnum)
+function! s:IsComment(lnum) abort
     if g:anyfold_identify_comments
-        return b:anyfold_commentlines[a:lnum]
+        return b:anyfold_commentlines[a:lnum-1]
     else
         return 0
     endif
@@ -123,7 +123,7 @@ endfunction
 "----------------------------------------------------------------------------/
 " Folding
 "----------------------------------------------------------------------------/
-function! s:NextNonBlankLine(lnum)
+function! s:NextNonBlankLine(lnum) abort
     let numlines = line('$')
     let current = a:lnum + 1
 
@@ -138,7 +138,7 @@ function! s:NextNonBlankLine(lnum)
     return -1
 endfunction
 
-function! s:PrevNonBlankLine(lnum)
+function! s:PrevNonBlankLine(lnum) abort
     let current = a:lnum - 1
 
     while current > 0
@@ -153,12 +153,12 @@ function! s:PrevNonBlankLine(lnum)
 endfunction
 
 " get indent hierarchy from actual indents
-function! s:InitIndentList()
+function! s:InitIndentList() abort
 
     " get list of actual indents (ind_list)
     let numlines = line('$')
     let ind_list = [0]
-    let current = 0
+    let current = 1
     while current <= numlines
         let prev_indent = indent(s:PrevNonBlankLine(current))
         let next_indent = indent(s:NextNonBlankLine(current))
@@ -170,7 +170,6 @@ function! s:InitIndentList()
         let current += 1
     endwhile
     let ind_list = ind_list[1:]
-
     " get hierarchical list of indents (hierind_list)
     let prev_ind = ind_list[-1]
     let hierind_list = [0]
@@ -201,15 +200,15 @@ function! s:InitIndentList()
     return hierind_list
 endfunction
 
-function! s:MarkCommentLines()
+function! s:MarkCommentLines() abort
     let numlines = line('$')
     let commentlines = []
-    let current = 0
+    let current = 1
     while current <= numlines
         " here we force identification of a comment line if it may belong to a
         " multiline comment (in this case we can not assume that it is
         " unindented)
-        if current > 0
+        if current > 1
             let force = commentlines[-1]
         else
             let force = 0
@@ -223,38 +222,38 @@ function! s:MarkCommentLines()
     return commentlines
 endfunction
 
-function! GetIndentFold(lnum)
+function! GetIndentFold(lnum) abort
 
     if s:IsComment(a:lnum)
         if g:anyfold_fold_comments
             " introduce artifical fold for docuboxes
-            return max([b:anyfold_indent_list[a:lnum] + 1, 2])
+            return max([b:anyfold_indent_list[a:lnum-1] + 1, 2])
         endif
     endif
 
-    let this_indent = b:anyfold_indent_list[a:lnum]
+    let this_indent = b:anyfold_indent_list[a:lnum-1]
 
     if a:lnum == len(b:anyfold_indent_list)-1
         return this_indent
     endif
 
-    let next_indent = b:anyfold_indent_list[a:lnum+1]
+    let next_indent = b:anyfold_indent_list[a:lnum]
 
     " heuristics to define blocks at foldlevel 0
     if this_indent == 0
 
-        let prev_indent = b:anyfold_indent_list[a:lnum-1]
+        let prev_indent = b:anyfold_indent_list[a:lnum-2]
 
         if a:lnum == 1
             let prevprev_indent = 0
         else
-            let prevprev_indent = b:anyfold_indent_list[a:lnum-2]
+            let prevprev_indent = b:anyfold_indent_list[a:lnum-3]
         endif
 
         if a:lnum >= line('$') - 1
             let nextnext_indent = 0
         else
-            let nextnext_indent = b:anyfold_indent_list[a:lnum+2]
+            let nextnext_indent = b:anyfold_indent_list[a:lnum+1]
         endif
 
         if next_indent > 0
@@ -284,7 +283,7 @@ function! GetIndentFold(lnum)
 
 endfunction
 
-function! s:ToggleFolds()
+function! s:ToggleFolds() abort
     if foldclosed(line('.')) != -1
         normal! zO
     elseif foldlevel('.') != 0
@@ -295,7 +294,7 @@ function! s:ToggleFolds()
     endif
 endfunction
 
-function! s:ReloadFolds(force)
+function! s:ReloadFolds(force) abort
     if &modified
         if a:force || line('$') != b:anyfold_numlines
             let b:anyfold_numlines = line('$')
@@ -315,12 +314,12 @@ function! s:ReloadFolds(force)
     endif
 endfunction
 
-function! s:echoLineIndent()
+function! s:echoLineIndent() abort
     echom GetIndentFold(line('.'))
 endfunction
 
-function! s:echoIndentList()
-    echom b:anyfold_indent_list[line('.')]
+function! s:echoIndentList() abort
+    echom b:anyfold_indent_list[line('.')-1]
 endfunction
 
 "----------------------------------------------------------------------------/
@@ -328,7 +327,7 @@ endfunction
 " Inspired by example code by Greg Sexton
 " http://www.gregsexton.org/2011/03/improving-the-text-displayed-in-a-fold/
 "----------------------------------------------------------------------------/
-function! MinimalFoldText()
+function! MinimalFoldText() abort
     let fs = v:foldstart
     while getline(fs) !~ '\w'
         let fs = nextnonblank(fs + 1)
@@ -351,7 +350,7 @@ endfunction
 "----------------------------------------------------------------------------/
 " Motion
 "----------------------------------------------------------------------------/
-function! s:JumpFoldStart(visual)
+function! s:JumpFoldStart(visual) abort
     if g:anyfold_auto_reload
         call s:ReloadFolds(0)
     endif
@@ -365,13 +364,13 @@ function! s:JumpFoldStart(visual)
     endif
 
     let curr_line = line('.')-1
-    let curr_foldlevel=b:anyfold_indent_list[line('.')]
+    let curr_foldlevel=b:anyfold_indent_list[line('.')-1]
 
-    if b:anyfold_indent_list[curr_line] == curr_foldlevel
+    if b:anyfold_indent_list[curr_line-1] == curr_foldlevel
         let curr_foldlevel += -1
     endif
 
-    while b:anyfold_indent_list[curr_line] > curr_foldlevel
+    while b:anyfold_indent_list[curr_line-1] > curr_foldlevel
         if curr_line == 1
             break
         endif
@@ -382,7 +381,7 @@ function! s:JumpFoldStart(visual)
 
 endfunction
 
-function! s:JumpFoldEnd(visual)
+function! s:JumpFoldEnd(visual) abort
     if g:anyfold_auto_reload
         call s:ReloadFolds(0)
     endif
@@ -396,13 +395,13 @@ function! s:JumpFoldEnd(visual)
     endif
 
     let curr_line = line('.')+1
-    let curr_foldlevel=b:anyfold_indent_list[line('.')]
+    let curr_foldlevel=b:anyfold_indent_list[line('.')-1]
 
-    if b:anyfold_indent_list[curr_line] == curr_foldlevel
+    if b:anyfold_indent_list[curr_line-1] == curr_foldlevel
         let curr_foldlevel += -1
     endif
 
-    while b:anyfold_indent_list[curr_line] > curr_foldlevel
+    while b:anyfold_indent_list[curr_line-1] > curr_foldlevel
         if curr_line == line('$')
             break
         endif
@@ -413,7 +412,7 @@ function! s:JumpFoldEnd(visual)
 
 endfunction
 
-function! s:JumpPrevFoldEnd(visual)
+function! s:JumpPrevFoldEnd(visual) abort
     if g:anyfold_auto_reload
         call s:ReloadFolds(0)
     endif
@@ -423,7 +422,7 @@ function! s:JumpPrevFoldEnd(visual)
     normal! kzkj
 endfunction
 
-function! s:JumpNextFoldStart(visual)
+function! s:JumpNextFoldStart(visual) abort
     if g:anyfold_auto_reload
         call s:ReloadFolds(0)
     endif
