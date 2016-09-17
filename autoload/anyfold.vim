@@ -10,7 +10,7 @@ function anyfold#init() abort
 
     if !exists('g:_ANYFOLD_DEFAULTS')
         let g:_ANYFOLD_DEFAULTS = {
-                    \ 'identify_comments':            0,
+                    \ 'identify_comments':            1,
                     \ 'fold_comments':                0,
                     \ 'fold_toplevel':                0,
                     \ 'fold_display':                 1,
