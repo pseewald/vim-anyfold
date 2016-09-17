@@ -11,13 +11,25 @@ Features and behaviour may change without prior notice.
 This Vim plugin comes with the following features:
 * Folding mechanism based on visually indented blocks that has a very intuitive and predictable behaviour.
 * Results comparable to syntax aware folding methods but generic algorithm that does not rely on language specific rules.
-* Works out of the box for any filetypes.
+* Works out of the box for any filetypes. Designed for languages that define scopes by keywords (e.g. Fortran, Julia) or indents (e.g. Python).
 * Shortcuts to toggle folds and to navigate to beginning / end of a block and to previous / next indented block.
 * Can handle corner cases with ease (comments, varying indentation widths, line breaks).
 
 It has the following shortcomings:
 * Can **not** correctly fold mismatched indentation and thus should only be used together with disciplined programming style (or in combination with Vim's `equalprg` autoindent feature).
+* Depending on the indent style, folds may not be optimal for languages that are based on braces (e.g. C++, Java, PHP, see examples below).
 * Indent based text objects not implemented - for that I recommend [vim-indent-object](https://github.com/michaeljsmith/vim-indent-object).
+
+
+## Examples
+
+Python | Fortran
+:-------------------------:|:-------------------------:
+[![](https://asciinema.org/a/3yvhrrie74wjq5bpm0m66pswp.png)](https://asciinema.org/a/3yvhrrie74wjq5bpm0m66pswp)  |  [![](https://asciinema.org/a/5kclxxkpjrqryhugulxn1jf77.png)](https://asciinema.org/a/5kclxxkpjrqryhugulxn1jf77)
+
+C++ | Java
+:-------------------------:|:-------------------------:
+[![](https://asciinema.org/a/4si1dcjsejaxmznnb5curnxf9.png)](https://asciinema.org/a/4si1dcjsejaxmznnb5curnxf9) | [![](https://asciinema.org/a/edt6it1evcrmr9myzf4owbezw.png)](https://asciinema.org/a/edt6it1evcrmr9myzf4owbezw)
 
 
 ## Setup and usage
