@@ -36,6 +36,7 @@ It has the following shortcomings:
 ![java](https://cloud.githubusercontent.com/assets/6178172/18611582/c4896374-7d3d-11e6-834b-9dcecb4ae1ef.gif)
 
 Examples were recorded using
+
     ```vim
     let anyfold_fold_comments=1
     colorscheme solarized
