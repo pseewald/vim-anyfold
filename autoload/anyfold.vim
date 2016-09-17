@@ -238,11 +238,11 @@ function! GetIndentFold(lnum) abort
 
     let this_indent = b:anyfold_indent_list[a:lnum-1]
 
-    if a:lnum == len(b:anyfold_indent_list)-1
-        return this_indent
+    if a:lnum >= line('$')
+        let next_indent = 0
+    else
+        let next_indent = b:anyfold_indent_list[a:lnum]
     endif
-
-    let next_indent = b:anyfold_indent_list[a:lnum]
 
     " heuristics to define blocks at foldlevel 0
     if g:anyfold_fold_toplevel && this_indent == 0
