@@ -90,7 +90,7 @@ g:anyfold_fold_display      | 0, 1    | 1 (= 'on')
 g:anyfold_toggle_key        | string  | '<Space>'
 g:anyfold_motion            | 0, 1    | 1 (= 'on')
 g:anyfold_auto_reload       | 0, 1    | 1 (= 'on')
-g:anyfold_identify_comments | 0, 1    | 0 (= 'off')
+g:anyfold_identify_comments | 0, 1    | 1 (= 'on')
 g:anyfold_fold_comments     | 0, 1    | 0 (= 'off')
 g:anyfold_fold_toplevel     | 0, 1    | 0 (= 'off')
 

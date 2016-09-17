@@ -50,20 +50,15 @@ It has the following shortcomings:
     ```vim
     hi Folded term=underline
     ```
-4. *Comments*: If comments are left unindented, indent folding produces wrong results. In this case you need to set
-    ```vim
-    let anyfold_identify_comments = 1
-    ```
-    such that unindented comments are identified and ignored. Note that this feature may lead to slow performance for large files.
 
-5. *Customization*: For expert configuration, AnyLoad triggers an event `AnyFoldLoaded` after initialisation. This enables user-defined startup steps such as
+4. *Customization*: For expert configuration, AnyLoad triggers an event `AnyFoldLoaded` after initialisation. This enables user-defined startup steps such as
 
     ```vim
     autocmd User AnyFoldLoaded normal zv
     ```
 
    which unfolds the line in which the cursor is located when opening a file.
-6. *Documentation*: For more detailed instructions and information, read the included vim doc `:h AnyFold`.
+5. *Documentation*: For more detailed instructions and information, read the included vim doc `:h AnyFold`.
 
 
 ## Options
@@ -86,7 +81,7 @@ Option | Values | Default value |  Description
 `anyfold_toggle_key` | string | '\<space\>' | Key to toggle folds
 `anyfold_motion` | 0, 1 | 1 | Map motion commands to `[[`, `]]`, `[j`, `]k`
 `anyfold_auto_reload` | 0, 1 | 1 | Automatically update folds
-`anyfold_identify_comments` | 0, 1 | 0 | Identify (and ignore) comment lines
+`anyfold_identify_comments` | 0, 1 | 1 | Identify (and ignore) comment lines
 `anyfold_fold_comments` | 0, 1 | 0 | Fold multiline comments
 `anyfold_fold_toplevel` | 0, 1 | 0 | Fold subsequent unindented lines
 
