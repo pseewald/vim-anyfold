@@ -98,7 +98,7 @@ function anyfold#init() abort
     endif
 
     let b:anyfold_initialised = 1
-    doautocmd User AnyFoldLoaded
+    silent doautocmd User AnyFoldLoaded
 endfunction
 
 function! s:CommentLine(lnum, force) abort
@@ -108,7 +108,7 @@ function! s:CommentLine(lnum, force) abort
     if indent(a:lnum) >= &sw && !a:force
         return 0
     else
-        return synIDattr(synID(a:lnum,indent(a:lnum)+1,1),"name") =~? 'Comment'
+        return synIDattr(synID(a:lnum,indent(a:lnum)+1,1),"name") =~? 'comment\|string'
                \ || getline(a:lnum)[0] == '#'
     endif
 endfunction
