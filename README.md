@@ -25,11 +25,11 @@ It has the following shortcomings:
 
 Python | Fortran
 :-------------------------:|:-------------------------:
-[![](https://asciinema.org/a/3yvhrrie74wjq5bpm0m66pswp.png)](https://asciinema.org/a/3yvhrrie74wjq5bpm0m66pswp)  |  [![](https://asciinema.org/a/5kclxxkpjrqryhugulxn1jf77.png)](https://asciinema.org/a/5kclxxkpjrqryhugulxn1jf77)
+![python](https://cloud.githubusercontent.com/assets/6178172/18611583/c489caa8-7d3d-11e6-8a12-57fe183250ed.gif) | ![fortran](https://cloud.githubusercontent.com/assets/6178172/18611581/c4865c92-7d3d-11e6-9a90-98bbb12d04d5.gif)
 
 C++ | Java
 :-------------------------:|:-------------------------:
-[![](https://asciinema.org/a/4si1dcjsejaxmznnb5curnxf9.png)](https://asciinema.org/a/4si1dcjsejaxmznnb5curnxf9) | [![](https://asciinema.org/a/edt6it1evcrmr9myzf4owbezw.png)](https://asciinema.org/a/edt6it1evcrmr9myzf4owbezw)
+![cpp](https://cloud.githubusercontent.com/assets/6178172/18611584/c48a3c86-7d3d-11e6-9d64-df01580709ae.gif) | ![java](https://cloud.githubusercontent.com/assets/6178172/18611582/c4896374-7d3d-11e6-834b-9dcecb4ae1ef.gif)
 
 
 ## Setup and usage
