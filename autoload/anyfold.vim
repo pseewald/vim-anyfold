@@ -12,6 +12,7 @@ function anyfold#init() abort
         let g:_ANYFOLD_DEFAULTS = {
                     \ 'identify_comments':            0,
                     \ 'fold_comments':                0,
+                    \ 'fold_toplevel':                0,
                     \ 'fold_display':                 1,
                     \ 'motion':                       1,
                     \ 'toggle_key':                   '<space>',
@@ -114,7 +115,11 @@ endfunction
 
 function! s:IsComment(lnum) abort
     if g:anyfold_identify_comments
-        return b:anyfold_commentlines[a:lnum-1]
+        if a:lnum <= line('$') && a:lnum > 0
+            return b:anyfold_commentlines[a:lnum-1]
+        else
+            return 0
+        endif
     else
         return 0
     endif
@@ -224,7 +229,7 @@ endfunction
 
 function! GetIndentFold(lnum) abort
 
-    if s:IsComment(a:lnum)
+    if s:IsComment(a:lnum) && (s:IsComment(a:lnum-1) || s:IsComment(a:lnum+1))
         if g:anyfold_fold_comments
             " introduce artifical fold for docuboxes
             return max([b:anyfold_indent_list[a:lnum-1] + 1, 2])
@@ -240,7 +245,7 @@ function! GetIndentFold(lnum) abort
     let next_indent = b:anyfold_indent_list[a:lnum]
 
     " heuristics to define blocks at foldlevel 0
-    if this_indent == 0
+    if g:anyfold_fold_toplevel && this_indent == 0
 
         let prev_indent = b:anyfold_indent_list[a:lnum-2]
 

@@ -88,6 +88,7 @@ Option | Values | Default value |  Description
 `anyfold_auto_reload` | 0, 1 | 1 | Automatically update folds
 `anyfold_identify_comments` | 0, 1 | 0 | Identify (and ignore) comment lines
 `anyfold_fold_comments` | 0, 1 | 0 | Fold multiline comments
+`anyfold_fold_toplevel` | 0, 1 | 0 | Fold subsequent unindented lines
 
 
 ## Acknowledgements
