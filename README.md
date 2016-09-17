@@ -23,13 +23,17 @@ It has the following shortcomings:
 
 ## Examples
 
-Python | Fortran
-:-------------------------:|:-------------------------:
-![python](https://cloud.githubusercontent.com/assets/6178172/18611583/c489caa8-7d3d-11e6-8a12-57fe183250ed.gif) | ![fortran](https://cloud.githubusercontent.com/assets/6178172/18611581/c4865c92-7d3d-11e6-9a90-98bbb12d04d5.gif)
+### Python
+![python](https://cloud.githubusercontent.com/assets/6178172/18611583/c489caa8-7d3d-11e6-8a12-57fe183250ed.gif)
 
-C++ | Java
-:-------------------------:|:-------------------------:
-![cpp](https://cloud.githubusercontent.com/assets/6178172/18611584/c48a3c86-7d3d-11e6-9d64-df01580709ae.gif) | ![java](https://cloud.githubusercontent.com/assets/6178172/18611582/c4896374-7d3d-11e6-834b-9dcecb4ae1ef.gif)
+### Fortran
+![fortran](https://cloud.githubusercontent.com/assets/6178172/18611581/c4865c92-7d3d-11e6-9a90-98bbb12d04d5.gif)
+
+### C++
+![cpp](https://cloud.githubusercontent.com/assets/6178172/18611584/c48a3c86-7d3d-11e6-9d64-df01580709ae.gif)
+
+### Java
+![java](https://cloud.githubusercontent.com/assets/6178172/18611582/c4896374-7d3d-11e6-834b-9dcecb4ae1ef.gif)
 
 
 ## Setup and usage
