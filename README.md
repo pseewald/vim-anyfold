@@ -1,6 +1,6 @@
 # AnyFold Vim plugin
 
-Generic folding mechanism based on indentation. Fold anything that is structured into indented blocks.
+Generic folding mechanism and motion based on indentation. Fold anything that is structured into indented blocks. Quickly navitate between blocks.
 
 
 ## Introduction
