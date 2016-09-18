@@ -1,12 +1,12 @@
 # AnyFold Vim plugin
 
-Generic folding mechanism and motion based on indentation. Fold anything that is structured into indented blocks. Quickly navitate between blocks.
+Generic folding mechanism and motion based on indentation. Fold anything that is structured into indented blocks. Quickly navigate between blocks.
 
 
 ## Introduction
 
 This Vim plugin comes with the following features:
-* Folding mechanism based on visually indented blocks that has a very intuitive and predictable behaviour (see examples below).
+* Folding mechanism based on indented blocks that has a very intuitive and predictable behaviour (see examples below).
 * Results comparable to syntax aware folding methods but generic algorithm that does not rely on language specific rules.
 * Works out of the box for any filetypes. Designed for languages that define scopes by keywords (e.g. Fortran, Julia) or indents (e.g. Python).
 * Shortcuts to toggle folds and to navigate to beginning / end of a block and to previous / next indented block.
