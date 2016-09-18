@@ -48,11 +48,14 @@ For dealing with folds in general, see |fold-commands|, |fold-options| and
     ]k          Move to the end of the previous block.
     [j          Move to the beginning of the next block.
 
-When a count is used, repeats the command [count] times.
-The move commands are very similar to the default fold motion commands
-"[z", "]z", "zj", "zk" but they are more intuitive for indented blocks. More
-specifically, the first line of a block is defined as the first line in a fold
-and the last line of a block as the next line after the last line in a fold.
+When a count is used, repeats the command [count] times. Commands can be used
+after an operator.
+
+The move commands are very similar to the default fold
+motion commands "[z", "]z", "zj", "zk" but they are more intuitive for indented
+blocks. More specifically, the first line of a block is defined as the first
+line in a fold and the last line of a block as the next line after the last
+line in a fold.
 
 Since AnyFold can not correctly fold mismatched indentation, auto-indenting
 is highly recommended. See |equalprg|.
@@ -110,7 +113,7 @@ https://github.com/pseewald/AnyFold
 ==============================================================================
 5. Changelog                                                   *AnyFoldChangelog*
 
-v0.3.1 - pre-release
+v1.0 - First stable release
 
 For full changelog, visit https://github.com/pseewald/AnyFold
 
