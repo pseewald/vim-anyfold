@@ -2,14 +2,11 @@
 
 Generic folding mechanism based on indentation. Fold anything that is structured into indented blocks.
 
-**NOTE**: this plugin is still in beta phase and under active development. If you use it, please make sure to regularly update to the most recent version.
-Features and behaviour may change without prior notice.
-
 
 ## Introduction
 
 This Vim plugin comes with the following features:
-* Folding mechanism based on visually indented blocks that has a very intuitive and predictable behaviour.
+* Folding mechanism based on visually indented blocks that has a very intuitive and predictable behaviour (see examples below).
 * Results comparable to syntax aware folding methods but generic algorithm that does not rely on language specific rules.
 * Works out of the box for any filetypes. Designed for languages that define scopes by keywords (e.g. Fortran, Julia) or indents (e.g. Python).
 * Shortcuts to toggle folds and to navigate to beginning / end of a block and to previous / next indented block.
@@ -17,7 +14,7 @@ This Vim plugin comes with the following features:
 
 It has the following shortcomings:
 * Can **not** correctly fold mismatched indentation and thus should only be used together with disciplined programming style (or in combination with Vim's `equalprg` autoindent feature).
-* Depending on the indent style, folds may not be optimal for languages that are based on braces (e.g. C++, Java, PHP, see examples below).
+* Depending on the indent style, folds may not be optimal for languages that are based on braces (see Java example below).
 * Indent based text objects not implemented - for that I recommend [vim-indent-object](https://github.com/michaeljsmith/vim-indent-object).
 
 
@@ -62,27 +59,27 @@ hi Folded term=NONE cterm=NONE
 
 ## Additional remarks
 
-1. *Filetype specific activation*:
+1. *Filetype specific activation:*
     Activate AnyFold for a selected <filetype> only with
 
     ```vim
     autocmd Filetype <filetype> let anyfold_activate=1
     ```
-2. *Useful folding commands*: Using the spacebar to toggle folds is the most convenient way of dealing with folds. Note that this always recursively opens all folds under the cursor. You can easily refold by placing the cursor somewhere inside the open fold and hitting `zx`. Open all folds with `zR`.
-3. *Fold display*: AnyFold's minimalistic display of closed fold assumes that folds are highlighted by your color scheme. If that is not the case, consider installing a suitable color scheme or highlight folds yourself by a command similar to
+2. *Useful folding commands:* Using the spacebar to toggle folds is the most convenient way of dealing with folds. Note that this always recursively opens all folds under the cursor. You can easily refold by placing the cursor somewhere inside the open fold and hitting `zx`. Open all folds with `zR`.
+3. *Fold display:* AnyFold's minimalistic display of closed fold assumes that folds are highlighted by your color scheme. If that is not the case, consider installing a suitable color scheme or highlight folds yourself by a command similar to
 
     ```vim
     hi Folded term=underline
     ```
 
-4. *Customization*: For expert configuration, AnyLoad triggers an event `AnyFoldLoaded` after initialisation. This enables user-defined startup steps such as
+4. *Customization:* For expert configuration, AnyLoad triggers an event `AnyFoldLoaded` after initialisation. This enables user-defined startup steps such as
 
     ```vim
     autocmd User AnyFoldLoaded normal zv
     ```
 
    which unfolds the line in which the cursor is located when opening a file.
-5. *Documentation*: For more detailed instructions and information, read the included vim doc `:h AnyFold`.
+5. *Documentation:* For more detailed instructions and information, read the included vim doc `:h AnyFold`.
 
 
 ## Options
