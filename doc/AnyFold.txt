@@ -48,6 +48,7 @@ For dealing with folds in general, see |fold-commands|, |fold-options| and
     ]k          Move to the end of the previous block.
     [j          Move to the beginning of the next block.
 
+When a count is used, repeats the command [count] times.
 The move commands are very similar to the default fold motion commands
 "[z", "]z", "zj", "zk" but they are more intuitive for indented blocks. More
 specifically, the first line of a block is defined as the first line in a fold

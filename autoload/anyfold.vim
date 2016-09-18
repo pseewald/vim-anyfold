@@ -60,9 +60,11 @@ function anyfold#init() abort
 
     " overwrite fold commands
     if g:anyfold_auto_reload
-        let s:foldcmd_reload = ['zc', 'zC', 'za', 'zA', 'zx', 'zX', 'zm', 'zM', '[z', ']z', 'zj', 'zk']
+        " We don't remap fold movement commands zj, zk, [z, ]z since [j, ]k, [[, ]]
+        " should be used instead
+        let s:foldcmd_reload = ['zc', 'zC', 'za', 'zA', 'zx', 'zX', 'zm', 'zM']
         for s:cmd in s:foldcmd_reload
-            exe 'noremap <buffer> <silent> '.s:cmd.' :call <SID>ReloadFolds(0)<cr>'.s:cmd
+            exe 'noremap <buffer> <silent> '.s:cmd.' :<c-u>call <SID>ReloadFolds(0)<cr>'.s:cmd
             exe 'vnoremap <buffer> <silent> '.s:cmd.' :<c-u>call <SID>ReloadFolds(0)<cr>gv'.s:cmd
         endfor
         autocmd BufWritePre * :call s:ReloadFolds(1)
@@ -74,28 +76,28 @@ function anyfold#init() abort
 
     if g:anyfold_motion
         noremap <script> <buffer> <silent> ]]
-                    \ :call <SID>JumpFoldEnd(0)<cr>
+                    \ :<c-u>call <SID>JumpFoldEnd(0,v:count1)<cr>
 
         noremap <script> <buffer> <silent> [[
-                    \ :call <SID>JumpFoldStart(0)<cr>
+                    \ :<c-u>call <SID>JumpFoldStart(0,v:count1)<cr>
 
         noremap <script> <buffer> <silent> ]k
-                    \ :call <SID>JumpPrevFoldEnd(0)<cr>
+                    \ :<c-u>call <SID>JumpPrevFoldEnd(0,v:count1)<cr>
 
         noremap <script> <buffer> <silent> [j
-                    \ :call <SID>JumpNextFoldStart(0)<cr>
+                    \ :<c-u>call <SID>JumpNextFoldStart(0,v:count1)<cr>
 
         vnoremap <script> <buffer> <silent> ]]
-                    \ :<c-u>call <SID>JumpFoldEnd(1)<cr>
+                    \ :<c-u>call <SID>JumpFoldEnd(1,v:count1)<cr>
 
         vnoremap <script> <buffer> <silent> [[
-                    \ :<c-u>call <SID>JumpFoldStart(1)<cr>
+                    \ :<c-u>call <SID>JumpFoldStart(1,v:count1)<cr>
 
         vnoremap <script> <buffer> <silent> ]k
-                    \ :<c-u>call <SID>JumpPrevFoldEnd(1)<cr>
+                    \ :<c-u>call <SID>JumpPrevFoldEnd(1,v:count1)<cr>
 
         vnoremap <script> <buffer> <silent> [j
-                    \ :<c-u>call <SID>JumpNextFoldStart(1)<cr>
+                    \ :<c-u>call <SID>JumpNextFoldStart(1,v:count1)<cr>
     endif
 
     " mappings for debugging
@@ -118,21 +120,21 @@ endfunction
 function! s:MarkCommentLines() abort
     let numlines = line('$')
     let commentlines = []
-    let current = 1
-    while current <= numlines
+    let curr_line = 1
+    while curr_line <= numlines
         " here we force identification of a comment line if it may belong to a
         " multiline comment (in this case we can not assume that it is
         " unindented)
-        if current > 1
+        if curr_line > 1
             let force = commentlines[-1]
         else
             let force = 0
         endif
         let commentlines += [0]
-        if s:CommentLine(current, force)
+        if s:CommentLine(curr_line, force)
             let commentlines[-1] = 1
         endif
-        let current += 1
+        let curr_line += 1
     endwhile
     return commentlines
 endfunction
@@ -171,14 +173,14 @@ endfunction
 "----------------------------------------------------------------------------/
 function! s:NextNonBlankLine(lnum) abort
     let numlines = line('$')
-    let current = a:lnum + 1
+    let curr_line = a:lnum + 1
 
-    while current <= numlines
-        if getline(current) =~? '\v\S' && !s:IsComment(current)
-            return current
+    while curr_line <= numlines
+        if getline(curr_line) =~? '\v\S' && !s:IsComment(curr_line)
+            return curr_line
         endif
 
-        let current += 1
+        let curr_line += 1
     endwhile
 
     return -1
@@ -188,14 +190,14 @@ endfunction
 " Previous non-blank line
 "----------------------------------------------------------------------------/
 function! s:PrevNonBlankLine(lnum) abort
-    let current = a:lnum - 1
+    let curr_line = a:lnum - 1
 
-    while current > 0
-        if getline(current) =~? '\v\S' && !s:IsComment(current)
-            return current
+    while curr_line > 0
+        if getline(curr_line) =~? '\v\S' && !s:IsComment(curr_line)
+            return curr_line
         endif
 
-        let current += -1
+        let curr_line += -1
     endwhile
 
     return 0
@@ -209,16 +211,16 @@ function! s:InitIndentList() abort
     " get list of actual indents (ind_list)
     let numlines = line('$')
     let ind_list = [0]
-    let current = 1
-    while current <= numlines
-        let prev_indent = indent(s:PrevNonBlankLine(current))
-        let next_indent = indent(s:NextNonBlankLine(current))
-        if getline(current) =~? '\v\S' && !s:IsComment(current)
-            let ind_list += [indent(current)]
+    let curr_line = 1
+    while curr_line <= numlines
+        let prev_indent = indent(s:PrevNonBlankLine(curr_line))
+        let next_indent = indent(s:NextNonBlankLine(curr_line))
+        if getline(curr_line) =~? '\v\S' && !s:IsComment(curr_line)
+            let ind_list += [indent(curr_line)]
         else
             let ind_list += [max([prev_indent,next_indent])]
         endif
-        let current += 1
+        let curr_line += 1
     endwhile
     let ind_list = ind_list[1:]
     " get hierarchical list of indents (hierind_list)
@@ -380,7 +382,7 @@ endfunction
 "----------------------------------------------------------------------------/
 " Motion
 "----------------------------------------------------------------------------/
-function! s:JumpFoldStart(visual) abort
+function! s:JumpFoldStart(visual, count1) abort
     if g:anyfold_auto_reload
         call s:ReloadFolds(0)
     endif
@@ -388,78 +390,94 @@ function! s:JumpFoldStart(visual) abort
         normal! gv
     endif
 
-    if line('.') == 1
-        call cursor(1,1)
-        return
-    endif
-
-    let curr_line = line('.')-1
-    let curr_foldlevel=b:anyfold_indent_list[line('.')-1]
-
-    if b:anyfold_indent_list[curr_line-1] == curr_foldlevel
-        let curr_foldlevel += -1
-    endif
-
-    while b:anyfold_indent_list[curr_line-1] > curr_foldlevel
+    let curr_line = line('.')
+    let rep=0
+    while rep < a:count1
+        let rep += 1
         if curr_line == 1
-            break
+            call cursor(1,1)
+            return
         endif
+
         let curr_line += -1
-    endwhile
+        let curr_foldlevel=b:anyfold_indent_list[curr_line]
 
-    call cursor(curr_line,1)
-
-endfunction
-
-function! s:JumpFoldEnd(visual) abort
-    if g:anyfold_auto_reload
-        call s:ReloadFolds(0)
-    endif
-    if a:visual
-        normal! gv
-    endif
-
-    if line('.') == line('$')
-        call cursor(line('$'),1)
-        return
-    endif
-
-    let curr_line = line('.')+1
-    let curr_foldlevel=b:anyfold_indent_list[line('.')-1]
-
-    if b:anyfold_indent_list[curr_line-1] == curr_foldlevel
-        let curr_foldlevel += -1
-    endif
-
-    while b:anyfold_indent_list[curr_line-1] > curr_foldlevel
-        if curr_line == line('$')
-            break
+        if b:anyfold_indent_list[curr_line-1] == curr_foldlevel
+            let curr_foldlevel += -1
         endif
-        let curr_line += 1
+
+        while b:anyfold_indent_list[curr_line-1] > curr_foldlevel
+            if curr_line == 1
+                break
+            endif
+            let curr_line += -1
+        endwhile
     endwhile
 
     call cursor(curr_line,1)
-
 endfunction
 
-function! s:JumpPrevFoldEnd(visual) abort
+function! s:JumpFoldEnd(visual, count1) abort
     if g:anyfold_auto_reload
         call s:ReloadFolds(0)
     endif
     if a:visual
         normal! gv
     endif
-    normal! kzkj
+
+    let curr_line = line('.')
+    let rep=0
+    while rep < a:count1
+        let rep += 1
+        if curr_line == line('$')
+            call cursor(line('$'),1)
+            return
+        endif
+
+        let curr_line += 1
+        let curr_foldlevel=b:anyfold_indent_list[curr_line-2]
+
+        if b:anyfold_indent_list[curr_line-1] == curr_foldlevel
+            let curr_foldlevel += -1
+        endif
+
+        while b:anyfold_indent_list[curr_line-1] > curr_foldlevel
+            if curr_line == line('$')
+                break
+            endif
+            let curr_line += 1
+        endwhile
+    endwhile
+
+    call cursor(curr_line,1)
 endfunction
 
-function! s:JumpNextFoldStart(visual) abort
+function! s:JumpPrevFoldEnd(visual, count1) abort
     if g:anyfold_auto_reload
         call s:ReloadFolds(0)
     endif
     if a:visual
         normal! gv
     endif
-    normal! zj
+    let rep=0
+    while rep < a:count1
+        let rep += 1
+        normal! kzkj
+    endwhile
+endfunction
+
+function! s:JumpNextFoldStart(visual, count1) abort
+    if g:anyfold_auto_reload
+        call s:ReloadFolds(0)
+    endif
+    if a:visual
+        normal! gv
+    endif
+    let rep=0
+    while rep < a:count1
+        let rep += 1
+        normal! zj
+    endwhile
 endfunction
 
 "----------------------------------------------------------------------------/
