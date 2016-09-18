@@ -1,13 +1,14 @@
-" AnyFold plugin
 "----------------------------------------------------------------------------/
-" Activation of requested features
+" Initialization: Activation of requested features
 "----------------------------------------------------------------------------/
 function anyfold#init() abort
 
+    " make sure initialisation only happens once
     if exists("b:anyfold_initialised")
         return
     endif
 
+    " Options and defaults
     if !exists('g:_ANYFOLD_DEFAULTS')
         let g:_ANYFOLD_DEFAULTS = {
                     \ 'identify_comments':            1,
@@ -27,29 +28,37 @@ function anyfold#init() abort
             let g:anyfold_{s:key} = copy(g:_ANYFOLD_DEFAULTS[s:key])
         endif
     endfor
+
+    " Option dependencies
     if g:anyfold_fold_comments
         let g:anyfold_identify_comments = 1
     endif
 
+    " Remember number of lines to check if folds need to be updated
     let b:anyfold_numlines = line('$')
 
+    " Identify comment lines
     if g:anyfold_identify_comments
         let b:anyfold_commentlines = s:MarkCommentLines()
         lockvar! b:anyfold_commentlines
     endif
 
+    " Create list with indents / foldlevels
     let b:anyfold_indent_list = s:InitIndentList()
     lockvar! b:anyfold_indent_list
 
+    " Set folds if not in diff mode
     if !&diff
         setlocal foldmethod=expr
         setlocal foldexpr=GetIndentFold(v:lnum)
     endif
 
+    " Fold display
     if g:anyfold_fold_display
         setlocal foldtext=MinimalFoldText()
     endif
 
+    " overwrite fold commands
     if g:anyfold_auto_reload
         let s:foldcmd_reload = ['zc', 'zC', 'za', 'zA', 'zx', 'zX', 'zm', 'zM', '[z', ']z', 'zj', 'zk']
         for s:cmd in s:foldcmd_reload
@@ -59,6 +68,7 @@ function anyfold#init() abort
         autocmd BufWritePre * :call s:ReloadFolds(1)
     endif
 
+    " mappings
     exe 'noremap <script> <buffer> <silent> '.g:anyfold_toggle_key.
                     \' :call <SID>ToggleFolds()<cr>'
 
@@ -88,6 +98,7 @@ function anyfold#init() abort
                     \ :<c-u>call <SID>JumpNextFoldStart(1)<cr>
     endif
 
+    " mappings for debugging
     if g:anyfold_debug
         noremap <script> <buffer> <silent> <F9>
                     \ :echom <SID>IsComment(line('.'))<cr>
@@ -101,10 +112,37 @@ function anyfold#init() abort
     silent doautocmd User AnyFoldLoaded
 endfunction
 
+"----------------------------------------------------------------------------/
+" Identify comment lines
+"----------------------------------------------------------------------------/
+function! s:MarkCommentLines() abort
+    let numlines = line('$')
+    let commentlines = []
+    let current = 1
+    while current <= numlines
+        " here we force identification of a comment line if it may belong to a
+        " multiline comment (in this case we can not assume that it is
+        " unindented)
+        if current > 1
+            let force = commentlines[-1]
+        else
+            let force = 0
+        endif
+        let commentlines += [0]
+        if s:CommentLine(current, force)
+            let commentlines[-1] = 1
+        endif
+        let current += 1
+    endwhile
+    return commentlines
+endfunction
+
+"----------------------------------------------------------------------------/
+" Check if line is unindented comment or preprocessor statement
+" Note: synID is very slow, therefore we identify unindented comments only
+" (or if force==1)
+"----------------------------------------------------------------------------/
 function! s:CommentLine(lnum, force) abort
-    " unindented comments and preprocessor statements
-    " Note: synID is very slow, therefore we identify unindented comments only
-    " (or if force==1)
     if indent(a:lnum) >= &sw && !a:force
         return 0
     else
@@ -113,6 +151,9 @@ function! s:CommentLine(lnum, force) abort
     endif
 endfunction
 
+"----------------------------------------------------------------------------/
+" Utility function to check if line is comment
+"----------------------------------------------------------------------------/
 function! s:IsComment(lnum) abort
     if g:anyfold_identify_comments
         if a:lnum <= line('$') && a:lnum > 0
@@ -126,7 +167,7 @@ function! s:IsComment(lnum) abort
 endfunction
 
 "----------------------------------------------------------------------------/
-" Folding
+" Next non-blank line
 "----------------------------------------------------------------------------/
 function! s:NextNonBlankLine(lnum) abort
     let numlines = line('$')
@@ -143,6 +184,9 @@ function! s:NextNonBlankLine(lnum) abort
     return -1
 endfunction
 
+"----------------------------------------------------------------------------/
+" Previous non-blank line
+"----------------------------------------------------------------------------/
 function! s:PrevNonBlankLine(lnum) abort
     let current = a:lnum - 1
 
@@ -157,7 +201,9 @@ function! s:PrevNonBlankLine(lnum) abort
     return 0
 endfunction
 
+"----------------------------------------------------------------------------/
 " get indent hierarchy from actual indents
+"----------------------------------------------------------------------------/
 function! s:InitIndentList() abort
 
     " get list of actual indents (ind_list)
@@ -205,28 +251,9 @@ function! s:InitIndentList() abort
     return hierind_list
 endfunction
 
-function! s:MarkCommentLines() abort
-    let numlines = line('$')
-    let commentlines = []
-    let current = 1
-    while current <= numlines
-        " here we force identification of a comment line if it may belong to a
-        " multiline comment (in this case we can not assume that it is
-        " unindented)
-        if current > 1
-            let force = commentlines[-1]
-        else
-            let force = 0
-        endif
-        let commentlines += [0]
-        if s:CommentLine(current, force)
-            let commentlines[-1] = 1
-        endif
-        let current += 1
-    endwhile
-    return commentlines
-endfunction
-
+"----------------------------------------------------------------------------/
+" fold expression
+"----------------------------------------------------------------------------/
 function! GetIndentFold(lnum) abort
 
     if s:IsComment(a:lnum) && (s:IsComment(a:lnum-1) || s:IsComment(a:lnum+1))
@@ -288,6 +315,9 @@ function! GetIndentFold(lnum) abort
 
 endfunction
 
+"----------------------------------------------------------------------------/
+" Toggle folds
+"----------------------------------------------------------------------------/
 function! s:ToggleFolds() abort
     if foldclosed(line('.')) != -1
         normal! zO
@@ -299,6 +329,9 @@ function! s:ToggleFolds() abort
     endif
 endfunction
 
+"----------------------------------------------------------------------------/
+" Update folds
+"----------------------------------------------------------------------------/
 function! s:ReloadFolds(force) abort
     if &modified
         if a:force || line('$') != b:anyfold_numlines
@@ -317,14 +350,6 @@ function! s:ReloadFolds(force) abort
             setlocal foldexpr=GetIndentFold(v:lnum)
         endif
     endif
-endfunction
-
-function! s:echoLineIndent() abort
-    echom GetIndentFold(line('.'))
-endfunction
-
-function! s:echoIndentList() abort
-    echom b:anyfold_indent_list[line('.')-1]
 endfunction
 
 "----------------------------------------------------------------------------/
@@ -436,3 +461,15 @@ function! s:JumpNextFoldStart(visual) abort
     endif
     normal! zj
 endfunction
+
+"----------------------------------------------------------------------------/
+" Debugging utilities
+"----------------------------------------------------------------------------/
+function! s:echoLineIndent() abort
+    echom GetIndentFold(line('.'))
+endfunction
+
+function! s:echoIndentList() abort
+    echom b:anyfold_indent_list[line('.')-1]
+endfunction
+
