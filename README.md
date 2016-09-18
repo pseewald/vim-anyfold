@@ -35,7 +35,9 @@ It has the following shortcomings:
 Examples were recorded using
 
 ```vim
+let anyfold_activate=1
 let anyfold_fold_comments=1
+set foldlevel=0
 colorscheme solarized
 hi Folded term=NONE cterm=NONE
 ```
@@ -60,7 +62,7 @@ hi Folded term=NONE cterm=NONE
 ## Additional remarks
 
 1. *Filetype specific activation:*
-    Activate AnyFold for a selected <filetype> only with
+    Activate AnyFold for a selected \<filetype\> only with
 
     ```vim
     autocmd Filetype <filetype> let anyfold_activate=1
