@@ -62,7 +62,7 @@ hi Folded term=NONE cterm=NONE
 ## Additional remarks
 
 1. *Filetype specific activation:*
-    Activate AnyFold for a selected <filetype> only with
+    Activate AnyFold for a selected \<filetype\> only with
 
     ```vim
     autocmd Filetype <filetype> let anyfold_activate=1
