@@ -483,7 +483,7 @@ function! s:JumpPrevFoldEnd(visual, count1) abort
     let rep=0
     while rep < a:count1
         let rep += 1
-        normal! kzkj
+        normal! kzkj0
     endwhile
 endfunction
 
