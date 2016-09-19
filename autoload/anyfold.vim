@@ -108,6 +108,8 @@ function anyfold#init() abort
                     \ :call <SID>echoLineIndent()<cr>
         noremap <script> <buffer> <silent> <F11>
                     \ :call <SID>echoIndentList()<cr>
+        noremap <script> <buffer> <silent> <F12>
+                    \ :echom <SID>ConsiderLine(line('.'))<cr>
     endif
 
     let b:anyfold_initialised = 1
@@ -169,6 +171,25 @@ function! s:IsComment(lnum) abort
 endfunction
 
 "----------------------------------------------------------------------------/
+" Utility function to check if line is to be considered
+" Note: this implements good heuristics for braces
+"----------------------------------------------------------------------------/
+function! s:ConsiderLine(lnum) abort
+    if getline(a:lnum) !~? '\v\S'
+        " empty line
+        return 0
+    elseif getline(a:lnum) =~? '^\s*\W\s*$'
+        " line containing brace only
+        return 0
+    elseif s:IsComment(a:lnum)
+        " unindented comment line
+        return 0
+    else
+        return 1
+    endif
+endfunction
+
+"----------------------------------------------------------------------------/
 " Next non-blank line
 "----------------------------------------------------------------------------/
 function! s:NextNonBlankLine(lnum) abort
@@ -176,7 +197,7 @@ function! s:NextNonBlankLine(lnum) abort
     let curr_line = a:lnum + 1
 
     while curr_line <= numlines
-        if getline(curr_line) =~? '\v\S' && !s:IsComment(curr_line)
+        if s:ConsiderLine(curr_line)
             return curr_line
         endif
 
@@ -193,7 +214,7 @@ function! s:PrevNonBlankLine(lnum) abort
     let curr_line = a:lnum - 1
 
     while curr_line > 0
-        if getline(curr_line) =~? '\v\S' && !s:IsComment(curr_line)
+        if s:ConsiderLine(curr_line)
             return curr_line
         endif
 
@@ -215,7 +236,7 @@ function! s:InitIndentList() abort
     while curr_line <= numlines
         let prev_indent = indent(s:PrevNonBlankLine(curr_line))
         let next_indent = indent(s:NextNonBlankLine(curr_line))
-        if getline(curr_line) =~? '\v\S' && !s:IsComment(curr_line)
+        if s:ConsiderLine(curr_line)
             let ind_list += [indent(curr_line)]
         else
             let ind_list += [max([prev_indent,next_indent])]

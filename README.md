@@ -6,15 +6,14 @@ Generic folding mechanism and motion based on indentation. Fold anything that is
 ## Introduction
 
 This Vim plugin comes with the following features:
-* Folding mechanism based on visually indented blocks that has a very intuitive and predictable behaviour (see examples below).
+* Folding mechanism based on indented blocks that has a very intuitive and predictable behaviour (see examples below).
 * Results comparable to syntax aware folding methods but generic algorithm that does not rely on language specific rules.
-* Works out of the box for any filetypes. Designed for languages that define scopes by keywords (e.g. Fortran, Julia) or indents (e.g. Python).
+* Works out of the box for any filetypes, optimal results for all indented languages (including properly indented curly brace languages).
 * Shortcuts to toggle folds and to navigate to beginning / end of a block and to previous / next indented block.
 * Can handle corner cases with ease (comments, varying indentation widths, line breaks).
 
 It has the following shortcomings:
 * Can **not** correctly fold mismatched indentation and thus should only be used together with disciplined programming style (or in combination with Vim's `equalprg` autoindent feature).
-* Depending on the indent style, folds may not be optimal for languages that are based on braces (see Java example below).
 * Indent based text objects not implemented - for that I recommend [vim-indent-object](https://github.com/michaeljsmith/vim-indent-object).
 
 
@@ -30,6 +29,7 @@ It has the following shortcomings:
 ![cpp](https://cloud.githubusercontent.com/assets/6178172/18611584/c48a3c86-7d3d-11e6-9d64-df01580709ae.gif)
 
 ### Java
+Note: this example is outdated since better defaults have been implemented for curly braces.
 ![java](https://cloud.githubusercontent.com/assets/6178172/18611582/c4896374-7d3d-11e6-834b-9dcecb4ae1ef.gif)
 
 Examples were recorded using
