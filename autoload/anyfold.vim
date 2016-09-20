@@ -344,11 +344,13 @@ endfunction
 function! s:ToggleFolds() abort
     if foldclosed(line('.')) != -1
         normal! zO
-    elseif foldlevel('.') != 0
+    else
         if g:anyfold_auto_reload
             call s:ReloadFolds(0)
         endif
-        normal! zc
+        if foldlevel('.') != 0
+            normal! zc
+        endif
     endif
 endfunction
 
