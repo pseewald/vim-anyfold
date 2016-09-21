@@ -9,4 +9,4 @@ elseif !g:anyfold_activate
     finish
 endif
 
-au BufEnter * call anyfold#init()
+au CursorMoved * call anyfold#init()
