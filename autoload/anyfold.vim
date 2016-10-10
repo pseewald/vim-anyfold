@@ -60,13 +60,7 @@ function anyfold#init() abort
 
     " overwrite fold commands
     if g:anyfold_auto_reload
-        " We don't remap fold movement commands zj, zk, [z, ]z since [j, ]k, [[, ]]
-        " should be used instead
-        let s:foldcmd_reload = ['zc', 'zC', 'za', 'zA', 'zx', 'zX', 'zm', 'zM']
-        for s:cmd in s:foldcmd_reload
-            exe 'noremap <buffer> <silent> '.s:cmd.' :<c-u>call <SID>ReloadFolds(0)<cr>'.s:cmd
-            exe 'vnoremap <buffer> <silent> '.s:cmd.' :<c-u>call <SID>ReloadFolds(0)<cr>gv'.s:cmd
-        endfor
+        autocmd CursorHold * :call s:ReloadFolds(0)
         autocmd BufWritePre * :call s:ReloadFolds(1)
     endif
 
@@ -513,4 +507,3 @@ endfunction
 function! s:echoIndentList() abort
     echom b:anyfold_indent_list[line('.')-1]
 endfunction
-
