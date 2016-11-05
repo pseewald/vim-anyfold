@@ -225,7 +225,7 @@ function! s:InitIndentList() abort
 
     " get list of actual indents (ind_list)
     let numlines = line('$')
-    let ind_list = [0]
+    let ind_list = []
     let curr_line = 1
     while curr_line <= numlines
         let prev_indent = indent(s:PrevNonBlankLine(curr_line))
@@ -237,34 +237,39 @@ function! s:InitIndentList() abort
         endif
         let curr_line += 1
     endwhile
-    let ind_list = ind_list[1:]
+
     " get hierarchical list of indents (hierind_list)
-    let prev_ind = ind_list[-1]
+    let prev_ind = ind_list[0]
     let hierind_list = [0]
-    let ind_open_list = [0]
+    let ind_open_list = [ind_list[0]]
+
     for ind in ind_list
         if ind > prev_ind
+            " this line starts a new block
             let hierind_list += [hierind_list[-1] + 1]
             let ind_open_list += [ind]
         elseif ind == prev_ind
+            " this line continues a block
             let hierind_list += [hierind_list[-1]]
-            if ind_open_list[-1] < ind
-                let ind_open_list += [ind]
-            elseif ind_open_list[-1] > ind
-                let ind_open_list[-1] = ind
-            endif
         elseif ind < prev_ind
+            " this line closes current block only if indent is less or equal to
+            " indent of the line starting the block (=ind_open_list[-2])
+            " line may close more than one block
             let n_closed = 0
-            while ind < ind_open_list[-1] && ind <= ind_open_list[-2]
+            while len(ind_open_list) >= 2 && ind <= ind_open_list[-2]
+                " close block
                 let ind_open_list = ind_open_list[:-2]
                 let n_closed += 1
             endwhile
+
+            " update current block indent
+            let ind_open_list[-1] = ind
+
             let hierind_list += [hierind_list[-1]-n_closed]
         endif
         let prev_ind = ind
     endfor
     let hierind_list = hierind_list[1:]
-
     return hierind_list
 endfunction
 
