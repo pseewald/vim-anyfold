@@ -6,6 +6,8 @@ function anyfold#init() abort
     " make sure initialisation only happens once
     if exists("b:anyfold_initialised")
         return
+    else
+        let b:anyfold_initialised = 1
     endif
 
     " Options and defaults
@@ -37,15 +39,9 @@ function anyfold#init() abort
     " Remember number of lines to check if folds need to be updated
     let b:anyfold_numlines = line('$')
 
-    " Identify comment lines
-    if g:anyfold_identify_comments
-        let b:anyfold_commentlines = s:MarkCommentLines()
-        lockvar! b:anyfold_commentlines
-    endif
-
     " Create list with indents / foldlevels
-    let b:anyfold_indent_list = s:InitIndentList()
-    lockvar! b:anyfold_indent_list
+
+    call s:InitIndentList()
 
     " Set folds if not in diff mode
     if !&diff
@@ -60,8 +56,7 @@ function anyfold#init() abort
 
     " overwrite fold commands
     if g:anyfold_auto_reload
-        autocmd CursorHold * :call s:ReloadFolds(0)
-        autocmd BufWritePre * :call s:ReloadFolds(1)
+        autocmd TextChanged * :call s:ReloadFolds(line('.'))
     endif
 
     " mappings
@@ -96,35 +91,31 @@ function anyfold#init() abort
 
     " mappings for debugging
     if g:anyfold_debug
-        noremap <script> <buffer> <silent> <F9>
-                    \ :echom <SID>IsComment(line('.'))<cr>
         noremap <script> <buffer> <silent> <F10>
-                    \ :call <SID>echoLineIndent()<cr>
+                    \ :call <SID>echoIndents(1)<cr>
         noremap <script> <buffer> <silent> <F11>
-                    \ :call <SID>echoIndentList()<cr>
+                    \ :call <SID>echoIndents(2)<cr>
         noremap <script> <buffer> <silent> <F12>
-                    \ :echom <SID>ConsiderLine(line('.'))<cr>
+                    \ :call <SID>echoIndents(3)<cr>
     endif
 
-    let b:anyfold_initialised = 1
     silent doautocmd User AnyFoldLoaded
 endfunction
 
 "----------------------------------------------------------------------------/
 " Identify comment lines
 "----------------------------------------------------------------------------/
-function! s:MarkCommentLines() abort
-    let numlines = line('$')
+function! s:MarkCommentLines(line_start, line_end) abort
     let commentlines = []
-    let curr_line = 1
-    while curr_line <= numlines
+    let curr_line = a:line_start
+    while curr_line <= a:line_end
         " here we force identification of a comment line if it may belong to a
         " multiline comment (in this case we can not assume that it is
         " unindented)
-        if curr_line > 1
+        if curr_line > a:line_start
             let force = commentlines[-1]
         else
-            let force = 0
+            let force = 1
         endif
         let commentlines += [0]
         if s:CommentLine(curr_line, force)
@@ -218,32 +209,54 @@ function! s:PrevNonBlankLine(lnum) abort
     return 0
 endfunction
 
-"----------------------------------------------------------------------------/
-" get indent hierarchy from actual indents
-"----------------------------------------------------------------------------/
 function! s:InitIndentList() abort
 
-    " get list of actual indents (ind_list)
-    let numlines = line('$')
+    let b:anyfold_commentlines = s:MarkCommentLines(1, line('$'))
+    let b:anyfold_ind_actual = s:ActualIndents(1, line('$'))
+    let b:anyfold_ind_contextual = s:ContextualIndents(0, 1, line('$'), b:anyfold_ind_actual)
+
+    lockvar! b:anyfold_ind_actual
+    lockvar! b:anyfold_commentlines
+    lockvar! b:anyfold_ind_contextual
+endfunction
+
+"----------------------------------------------------------------------------/
+" get actual indents
+" don't depend on context
+"----------------------------------------------------------------------------/
+function! s:ActualIndents(line_start, line_end) abort
     let ind_list = []
-    let curr_line = 1
-    while curr_line <= numlines
-        let prev_indent = indent(s:PrevNonBlankLine(curr_line))
-        let next_indent = indent(s:NextNonBlankLine(curr_line))
-        if s:ConsiderLine(curr_line)
-            let ind_list += [indent(curr_line)]
-        else
-            let ind_list += [max([prev_indent,next_indent])]
-        endif
+    let curr_line = a:line_start
+    while curr_line <= a:line_end
+        let ind_list += [s:LineIndent(curr_line)]
         let curr_line += 1
     endwhile
+    return ind_list
+endfunction
 
-    " get hierarchical list of indents (hierind_list)
-    let prev_ind = ind_list[0]
-    let hierind_list = [0]
-    let ind_open_list = [ind_list[0]]
+"----------------------------------------------------------------------------/
+" get indent, filtering ignores special lines (empty lines, comment lines ...)
+"----------------------------------------------------------------------------/
+function! s:LineIndent(lnum) abort
+    let prev_indent = indent(s:PrevNonBlankLine(a:lnum))
+    let next_indent = indent(s:NextNonBlankLine(a:lnum))
+    if s:ConsiderLine(a:lnum)
+        return indent(a:lnum)
+    else
+        return max([prev_indent,next_indent])
+    endif
+endfunction
 
-    for ind in ind_list
+"----------------------------------------------------------------------------/
+" get indent hierarchy from actual indents
+" indents depend on context
+"----------------------------------------------------------------------------/
+function! s:ContextualIndents(init_ind, line_start, line_end, ind_list) abort
+    let prev_ind = a:ind_list[0]
+    let hierind_list = [a:init_ind]
+    let ind_open_list = [a:ind_list[0]]
+
+    for ind in a:ind_list
         if ind > prev_ind
             " this line starts a new block
             let hierind_list += [hierind_list[-1] + 1]
@@ -281,33 +294,33 @@ function! GetIndentFold(lnum) abort
     if s:IsComment(a:lnum) && (s:IsComment(a:lnum-1) || s:IsComment(a:lnum+1))
         if g:anyfold_fold_comments
             " introduce artifical fold for docuboxes
-            return max([b:anyfold_indent_list[a:lnum-1] + 1, 2])
+            return b:anyfold_ind_contextual[a:lnum-1] + 1
         endif
     endif
 
-    let this_indent = b:anyfold_indent_list[a:lnum-1]
+    let this_indent = b:anyfold_ind_contextual[a:lnum-1]
 
     if a:lnum >= line('$')
         let next_indent = 0
     else
-        let next_indent = b:anyfold_indent_list[a:lnum]
+        let next_indent = b:anyfold_ind_contextual[a:lnum]
     endif
 
     " heuristics to define blocks at foldlevel 0
     if g:anyfold_fold_toplevel && this_indent == 0
 
-        let prev_indent = b:anyfold_indent_list[a:lnum-2]
+        let prev_indent = b:anyfold_ind_contextual[a:lnum-2]
 
         if a:lnum == 1
             let prevprev_indent = 0
         else
-            let prevprev_indent = b:anyfold_indent_list[a:lnum-3]
+            let prevprev_indent = b:anyfold_ind_contextual[a:lnum-3]
         endif
 
         if a:lnum >= line('$') - 1
             let nextnext_indent = 0
         else
-            let nextnext_indent = b:anyfold_indent_list[a:lnum+1]
+            let nextnext_indent = b:anyfold_ind_contextual[a:lnum+1]
         endif
 
         if next_indent > 0
@@ -344,9 +357,6 @@ function! s:ToggleFolds() abort
     if foldclosed(line('.')) != -1
         normal! zO
     else
-        if g:anyfold_auto_reload
-            call s:ReloadFolds(0)
-        endif
         if foldlevel('.') != 0
             normal! zc
         endif
@@ -355,25 +365,106 @@ endfunction
 
 "----------------------------------------------------------------------------/
 " Update folds
+" Only lines that have been changed are updated
 "----------------------------------------------------------------------------/
-function! s:ReloadFolds(force) abort
-    if &modified
-        if a:force || line('$') != b:anyfold_numlines
-            let b:anyfold_numlines = line('$')
+function! s:ReloadFolds(lnum) abort
 
-            if g:anyfold_identify_comments
-                unlockvar! b:anyfold_commentlines
-                let b:anyfold_commentlines = s:MarkCommentLines()
-                lockvar! b:anyfold_commentlines
+    let delta_lines = line('$') - len(b:anyfold_ind_actual)
+
+    " get first and last line of previously changed block
+    let changed_start = getpos("'[")[1]
+    let changed_end = getpos("']")[1]
+
+    let changed = [changed_start, changed_end]
+
+    let changed_lines = changed[1] - changed[0] + 1
+
+    unlockvar! b:anyfold_ind_actual
+    unlockvar! b:anyfold_ind_contextual
+
+    let b:anyfold_ind_actual = s:ExtendLineList(b:anyfold_ind_actual, changed[0], changed[1])
+    let b:anyfold_ind_contextual = s:ExtendLineList(b:anyfold_ind_contextual, changed[0], changed[1])
+
+    " partially update comments
+    if g:anyfold_identify_comments
+        unlockvar! b:anyfold_commentlines
+        let b:anyfold_commentlines = s:ExtendLineList(b:anyfold_commentlines, changed[0], changed[1])
+        if changed_lines > 0
+            let b:anyfold_commentlines[changed[0]-1 : changed[1]-1] = s:MarkCommentLines(changed[0], changed[1])
+        endif
+        lockvar! b:anyfold_commentlines
+    endif
+
+    if changed_lines > 0
+
+        " partially update actual indent
+        let b:anyfold_ind_actual[changed[0]-1 : changed[1]-1] = s:ActualIndents(changed[0], changed[1])
+
+        " find beginning of current code block for updating contextual indents
+        " 1) find minimal indent present in changed block
+        " 2) move up until line is found with indent <= minimal indent of
+        " changed block
+        let min_indent = min(b:anyfold_ind_actual[changed[0]-1 : changed[1]-1])
+
+        let curr_line = changed[0]
+        let block_start_found = 0
+        while !block_start_found
+            if curr_line > 1
+                let curr_line += -1
+            endif
+            if b:anyfold_ind_actual[curr_line-1] <= min_indent
+                let block_start_found = 1
             endif
 
-            unlockvar! b:anyfold_indent_list
-            let b:anyfold_indent_list = s:InitIndentList()
-            lockvar! b:anyfold_indent_list
+            if curr_line == 1 && !block_start_found
+                let block_start_found = 1
+            endif
+        endwhile
+        let changed_block_start = curr_line
 
-            setlocal foldexpr=GetIndentFold(v:lnum)
-        endif
+        " find end of current block for updating contextual indents
+        let curr_line = changed[1]
+        let block_start_found = 0
+        while !block_start_found
+            if curr_line < line('$')
+                let curr_line += 1
+            endif
+            if b:anyfold_ind_actual[curr_line-1] <= min_indent
+                let block_start_found = 1
+            endif
+
+            if curr_line == line('$') && !block_start_found
+                let block_start_found = 1
+            endif
+        endwhile
+        let changed_block_end = curr_line
+
+        let changed_block = [changed_block_start, changed_block_end]
+
+        let init_ind = b:anyfold_ind_contextual[changed_block[0]-1]
+        let b:anyfold_ind_contextual[changed_block[0]-1 : changed_block[1]-1] =
+                    \ s:ContextualIndents(init_ind, changed_block[0], changed_block[1],
+                    \ b:anyfold_ind_actual[changed_block[0]-1:changed_block[1]-1])
     endif
+
+    lockvar! b:anyfold_ind_actual
+    lockvar! b:anyfold_ind_contextual
+
+    setlocal foldexpr=GetIndentFold(v:lnum)
+
+endfunction
+
+"----------------------------------------------------------------------------/
+" Extend lists containing entries for each line to the current number of lines.
+" Zero out part that correspond to changed lines and move all other entries to
+" the correct positions.
+"----------------------------------------------------------------------------/
+function! s:ExtendLineList(list, insert_start, insert_end) abort
+    let changed_lines = a:insert_end - a:insert_start + 1
+    let delta_lines = line('$') - len(a:list)
+
+    return a:list[ : a:insert_start-2] + repeat([0], changed_lines) + a:list[a:insert_end-delta_lines : ]
+
 endfunction
 
 "----------------------------------------------------------------------------/
@@ -405,9 +496,6 @@ endfunction
 " Motion
 "----------------------------------------------------------------------------/
 function! s:JumpFoldStart(visual, count1) abort
-    if g:anyfold_auto_reload
-        call s:ReloadFolds(0)
-    endif
     if a:visual
         normal! gv
     endif
@@ -422,13 +510,13 @@ function! s:JumpFoldStart(visual, count1) abort
         endif
 
         let curr_line += -1
-        let curr_foldlevel=b:anyfold_indent_list[curr_line]
+        let curr_foldlevel=b:anyfold_ind_contextual[curr_line]
 
-        if b:anyfold_indent_list[curr_line-1] == curr_foldlevel
+        if b:anyfold_ind_contextual[curr_line-1] == curr_foldlevel
             let curr_foldlevel += -1
         endif
 
-        while b:anyfold_indent_list[curr_line-1] > curr_foldlevel
+        while b:anyfold_ind_contextual[curr_line-1] > curr_foldlevel
             if curr_line == 1
                 break
             endif
@@ -440,9 +528,6 @@ function! s:JumpFoldStart(visual, count1) abort
 endfunction
 
 function! s:JumpFoldEnd(visual, count1) abort
-    if g:anyfold_auto_reload
-        call s:ReloadFolds(0)
-    endif
     if a:visual
         normal! gv
     endif
@@ -457,13 +542,13 @@ function! s:JumpFoldEnd(visual, count1) abort
         endif
 
         let curr_line += 1
-        let curr_foldlevel=b:anyfold_indent_list[curr_line-2]
+        let curr_foldlevel=b:anyfold_ind_contextual[curr_line-2]
 
-        if b:anyfold_indent_list[curr_line-1] == curr_foldlevel
+        if b:anyfold_ind_contextual[curr_line-1] == curr_foldlevel
             let curr_foldlevel += -1
         endif
 
-        while b:anyfold_indent_list[curr_line-1] > curr_foldlevel
+        while b:anyfold_ind_contextual[curr_line-1] > curr_foldlevel
             if curr_line == line('$')
                 break
             endif
@@ -475,9 +560,6 @@ function! s:JumpFoldEnd(visual, count1) abort
 endfunction
 
 function! s:JumpPrevFoldEnd(visual, count1) abort
-    if g:anyfold_auto_reload
-        call s:ReloadFolds(0)
-    endif
     if a:visual
         normal! gv
     endif
@@ -489,9 +571,6 @@ function! s:JumpPrevFoldEnd(visual, count1) abort
 endfunction
 
 function! s:JumpNextFoldStart(visual, count1) abort
-    if g:anyfold_auto_reload
-        call s:ReloadFolds(0)
-    endif
     if a:visual
         normal! gv
     endif
@@ -503,12 +582,14 @@ function! s:JumpNextFoldStart(visual, count1) abort
 endfunction
 
 "----------------------------------------------------------------------------/
-" Debugging utilities
+" Debugging
 "----------------------------------------------------------------------------/
-function! s:echoLineIndent() abort
-    echom GetIndentFold(line('.'))
-endfunction
-
-function! s:echoIndentList() abort
-    echom b:anyfold_indent_list[line('.')-1]
+function! s:echoIndents(mode) abort
+    if a:mode == 1
+        echom b:anyfold_commentlines[line('.')-1]
+    elseif a:mode == 2
+        echom b:anyfold_ind_actual[line('.')-1]
+    elseif a:mode == 3
+        echom b:anyfold_ind_contextual[line('.')-1]
+    endif
 endfunction
