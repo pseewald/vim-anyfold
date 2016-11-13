@@ -397,7 +397,6 @@ function! s:ReloadFolds(lnum) abort
     let b:anyfold_ind_contextual = s:ExtendLineList(b:anyfold_ind_contextual, changed[0], changed[1])
     let b:anyfold_ind_buffer = s:ExtendLineList(b:anyfold_ind_buffer, changed[0], changed[1])
 
-
     if changed_lines > 0
 
         " partially update actual indent
@@ -474,10 +473,24 @@ endfunction
 " the correct positions.
 "----------------------------------------------------------------------------/
 function! s:ExtendLineList(list, insert_start, insert_end) abort
-    let changed_lines = a:insert_end - a:insert_start + 1
+    let nchanged = a:insert_end - a:insert_start + 1
     let delta_lines = line('$') - len(a:list)
 
-    return a:list[ : a:insert_start-2] + repeat([0], changed_lines) + a:list[a:insert_end-delta_lines : ]
+    let b1 = a:insert_start-2
+    let b2 = a:insert_end-delta_lines
+
+    let push_front = b1 >= 0
+    let push_back = b2 <= len(a:list) - 1
+
+    if push_front && push_back
+        return a:list[ : b1] + repeat([0], nchanged) + a:list[b2 : ]
+    elseif push_front
+        return a:list[ : b1] + repeat([0], nchanged)
+    elseif push_back
+        return repeat([0], nchanged) + a:list[b2 : ]
+    else
+        return repeat([0], nchanged)
+    endif
 
 endfunction
 
