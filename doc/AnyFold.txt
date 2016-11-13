@@ -1,19 +1,19 @@
-*AnyFold.txt*    indent based folding of anything and everything    *AnyFold*
+*anyfold.txt*    indent based folding of anything and everything    *anyfold*
 
 ==============================================================================
-CONTENTS                                                       *AnyFoldContents*
+CONTENTS                                                       *anyfoldContents*
 
-    1. Introduction .....................|AnyFoldIntroduction|
-    2. Usage ............................|AnyFoldUsage|
-    3. Configuration and Options ........|AnyFoldConfiguration|
-    4. Contributing .....................|AnyFoldContributing|
-    5. Changelog ........................|AnyFoldChangelog|
-    6. License ..........................|AnyFoldLicense|
+    1. Introduction .....................|anyfoldIntroduction|
+    2. Usage ............................|anyfoldUsage|
+    3. Configuration and Options ........|anyfoldConfiguration|
+    4. Contributing .....................|anyfoldContributing|
+    5. Changelog ........................|anyfoldChangelog|
+    6. License ..........................|anyfoldLicense|
 
 ==============================================================================
-1. Introduction                                               *AnyFoldIntroduction*
+1. Introduction                                               *anyfoldIntroduction*
 
-AnyFold allows quick navigation and focus in files that are structured by
+Anyfold allows quick navigation and focus in files that are structured by
 indentation. Its folding mechanism is generic and works equally well for any
 language. Folds based on indented blocks are very useful to reveal the logical
 structure of a complex file and to hide irrelevant information.
@@ -23,25 +23,25 @@ yourself. Nonetheless, here comes a rough description of how folds are defined:
 each line followed by a hanging indent starts a new fold. A fold is closed by
 the next line with the same indent as the first line of the fold. The actual
 indents present in a file are carefully postprocessed to ensure that every fold
-contain exactly one logical block of code. AnyFold can handle many corner cases
+contain exactly one logical block of code. Anyfold can handle many corner cases
 such as comments, empty lines and varying indentation widths. A fast fold update
 mechanism makes sure that folds are in sync with buffer.
 
 ==============================================================================
-2. Usage                                                         *AnyFoldUsage*
+2. Usage                                                         *anyfoldUsage*
 
-AnyFold needs to be activated by adding one line to your vimrc:
+anyfold needs to be activated by adding one line to your vimrc:
 
-* AnyFold active for all filetypes
+* anyfold active for all filetypes
     let g:anyfold_activate=1
 
-* AnyFold active for a specific filetype
+* anyfold active for a specific filetype
     autocmd Filetype <your-filetype> let g:anyfold_activate=1
 
 For dealing with folds in general, see |fold-commands|, |fold-options| and
-|fold-behavior|. Additionally, AnyFold defines the following mappings:
+|fold-behavior|. Additionally, anyfold defines the following mappings:
 
-    [[          Move to the beginning of the current block.      *AnyFoldMotion*
+    [[          Move to the beginning of the current block.      *anyfoldMotion*
     ]]          Move to the end of the current block.
     ]k          Move to the end of the previous block.
     [j          Move to the beginning of the next block.
@@ -55,10 +55,10 @@ blocks. More specifically, the first line of a block is defined as the first
 line in a fold and the last line of a block as the next line after the last
 line in a fold.
 
-Since AnyFold can not correctly fold mismatched indentation, auto-indenting
+Since anyfold can not correctly fold mismatched indentation, auto-indenting
 is highly recommended. See |equalprg|.
 
-                                                              *AnyFoldComments*
+                                                              *anyfoldComments*
 If comments are left unindented, indent folding produces wrong results. In this
 case you need to set
     let g:anyfold_identify_comments = 1
@@ -67,9 +67,9 @@ such that comments are identified and ignored. Note that this feature may lead
 to slow performance for large files.
 
 ==============================================================================
-3. Configuration and Options                            *AnyFoldConfiguration*
-                                                             *AnyFoldOptions*
-For more control over mappings and features, AnyFold provides the following
+3. Configuration and Options                            *anyfoldConfiguration*
+                                                             *anyfoldOptions*
+For more control over mappings and features, anyfold provides the following
 options. These can be set either globally
     let <option>=<value>
 
@@ -79,12 +79,12 @@ or filetype specific
 Option                      | Description
 ----------------------------------------------------------------------
 g:anyfold_fold_display      | Minimalistic display of closed folds
-g:anyfold_motion            | Map motion commands (|AnyFoldMotion|)
+g:anyfold_motion            | Map motion commands (|anyfoldMotion|)
 g:anyfold_identify_comments | Identify (and ignore) comment lines
 g:anyfold_fold_comments     | Fold multiline comments
 g:anyfold_fold_toplevel     | Fold subsequent unindented lines
 
-Option                      | Type    | Default value               *AnyFoldDefaults*
+Option                      | Type    | Default value               *anyfoldDefaults*
 ----------------------------------------------------------------------
 g:anyfold_fold_display      | 0, 1    | 1 (= 'on')
 g:anyfold_motion            | 0, 1    | 1 (= 'on')
@@ -92,27 +92,27 @@ g:anyfold_identify_comments | 0, 1    | 1 (= 'on')
 g:anyfold_fold_comments     | 0, 1    | 0 (= 'off')
 g:anyfold_fold_toplevel     | 0, 1    | 0 (= 'off')
 
-                                                                *AnyFoldLoaded*
-For expert configuration, AnyFold triggers an |autocmd-event| `AnyFoldLoaded`
+                                                                *anyfoldLoaded*
+For expert configuration, anyfold triggers an |autocmd-event| `anyfoldLoaded`
 after initialisation. This enables user-defined initialisation steps such as
-    autocmd User AnyFoldLoaded normal zv
+    autocmd User anyfoldLoaded normal zv
 which unfolds the line in which the cursor is located when opening a file.
 
 ==============================================================================
-4. Contributing                                              *AnyFoldContributing*
+4. Contributing                                              *anyfoldContributing*
 
 Contributions are very welcome! Visit the official repository
-https://github.com/pseewald/AnyFold
+https://github.com/pseewald/vim-anyfold
 
 ==============================================================================
-5. Changelog                                                   *AnyFoldChangelog*
+5. Changelog                                                   *anyfoldChangelog*
 
 v1.0 - First stable release
 
-For full changelog, visit https://github.com/pseewald/AnyFold
+For full changelog, visit https://github.com/pseewald/vim-anyfold
 
 ==============================================================================
-6. License                                                     *AnyFoldLicense*
+6. License                                                     *anyfoldLicense*
 MIT License
 
 Copyright (c) 2016 Patrick Seewald

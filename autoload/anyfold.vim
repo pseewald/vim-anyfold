@@ -1,7 +1,7 @@
 "----------------------------------------------------------------------------/
 " Initialization: Activation of requested features
 "----------------------------------------------------------------------------/
-function anyfold#init() abort
+function! anyfold#init() abort
 
     " make sure initialisation only happens once
     if exists("b:anyfold_initialised")
@@ -84,11 +84,11 @@ function anyfold#init() abort
     " mappings for debugging
     if g:anyfold_debug
         noremap <script> <buffer> <silent> <F10>
-                    \ :call <SID>echoIndents(1)<cr>
+                    \ :call <SID>EchoIndents(1)<cr>
         noremap <script> <buffer> <silent> <F11>
-                    \ :call <SID>echoIndents(2)<cr>
+                    \ :call <SID>EchoIndents(2)<cr>
         noremap <script> <buffer> <silent> <F12>
-                    \ :call <SID>echoIndents(3)<cr>
+                    \ :call <SID>EchoIndents(3)<cr>
     endif
 
     silent doautocmd User AnyFoldLoaded
@@ -613,7 +613,7 @@ endfunction
 "----------------------------------------------------------------------------/
 " Debugging
 "----------------------------------------------------------------------------/
-function! s:echoIndents(mode) abort
+function! s:EchoIndents(mode) abort
     if a:mode == 1
         echom s:IsComment(line('.'))
         "echom b:anyfold_commentlines[line('.')-1]

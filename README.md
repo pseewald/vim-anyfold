@@ -1,4 +1,4 @@
-# AnyFold Vim plugin
+# vim-anyfold
 
 Generic folding mechanism and motion based on indentation. Fold anything that is structured into indented blocks. Quickly navigate between blocks.
 
@@ -63,26 +63,26 @@ hi Folded term=NONE cterm=NONE
 ## Additional remarks
 
 1. *Filetype specific activation:*
-    Activate AnyFold for a selected \<filetype\> only with
+    Activate anyfold for a selected \<filetype\> only with
 
     ```vim
     autocmd Filetype <filetype> let anyfold_activate=1
     ```
-2. *Supported folding commands:* AnyFold uses `foldmethod=expr` to define folds. Thus all commands that work with expression folding are supported.
-3. *Fold display:* AnyFold's minimalistic display of closed fold assumes that folds are highlighted by your color scheme. If that is not the case, consider installing a suitable color scheme or highlight folds yourself by a command similar to
+2. *Supported folding commands:* anyfold uses `foldmethod=expr` to define folds. Thus all commands that work with expression folding are supported.
+3. *Fold display:* anyfold's minimalistic display of closed fold assumes that folds are highlighted by your color scheme. If that is not the case, consider installing a suitable color scheme or highlight folds yourself by a command similar to
 
     ```vim
     hi Folded term=underline
     ```
 
-4. *Customization:* For expert configuration, AnyFold triggers an event `AnyFoldLoaded` after initialisation. This enables user-defined startup steps such as
+4. *Customization:* For expert configuration, anyfold triggers an event `anyfoldLoaded` after initialisation. This enables user-defined startup steps such as
 
     ```vim
-    autocmd User AnyFoldLoaded normal zv
+    autocmd User anyfoldLoaded normal zv
     ```
 
    which unfolds the line in which the cursor is located when opening a file.
-5. *Documentation:* For more detailed instructions and information, read the included vim doc `:h AnyFold`.
+5. *Documentation:* For more detailed instructions and information, read the included vim doc `:h anyfold`.
 
 
 ## Options
