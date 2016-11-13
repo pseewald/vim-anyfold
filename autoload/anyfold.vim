@@ -18,8 +18,6 @@ function anyfold#init() abort
                     \ 'fold_toplevel':                0,
                     \ 'fold_display':                 1,
                     \ 'motion':                       1,
-                    \ 'toggle_key':                   '<space>',
-                    \ 'auto_reload':                  1,
                     \ 'debug':                        0,
                     \ }
         lockvar! g:_ANYFOLD_DEFAULTS
@@ -54,14 +52,8 @@ function anyfold#init() abort
         setlocal foldtext=MinimalFoldText()
     endif
 
-    " overwrite fold commands
-    if g:anyfold_auto_reload
-        autocmd TextChanged * :call s:ReloadFolds(line('.'))
-    endif
-
-    " mappings
-    exe 'noremap <script> <buffer> <silent> '.g:anyfold_toggle_key.
-                    \' :call <SID>ToggleFolds()<cr>'
+    " folds are always updated when buffer has changed
+    autocmd TextChanged * :call s:ReloadFolds(line('.'))
 
     if g:anyfold_motion
         noremap <script> <buffer> <silent> ]]
@@ -348,19 +340,6 @@ function! GetIndentFold(lnum) abort
         return '>' . next_indent
     endif
 
-endfunction
-
-"----------------------------------------------------------------------------/
-" Toggle folds
-"----------------------------------------------------------------------------/
-function! s:ToggleFolds() abort
-    if foldclosed(line('.')) != -1
-        normal! zO
-    else
-        if foldlevel('.') != 0
-            normal! zc
-        endif
-    endif
 endfunction
 
 "----------------------------------------------------------------------------/
