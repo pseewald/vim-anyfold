@@ -351,8 +351,14 @@ function! s:ReloadFolds(lnum) abort
     let delta_lines = line('$') - len(b:anyfold_ind_actual)
 
     " get first and last line of previously changed block
-    let changed_start = getpos("'[")[1]
-    let changed_end = getpos("']")[1]
+    let changed_start = s:PrevNonBlankLine(getpos("'[")[1])
+    let changed_end = s:NextNonBlankLine(getpos("']")[1])
+    if changed_start == 0
+        let changed_start = 1
+    endif
+    if changed_end == -1
+        let changed_end = line('$')
+    endif
 
     let changed = [changed_start, changed_end]
 
@@ -384,6 +390,10 @@ function! s:ReloadFolds(lnum) abort
         " 2) move down until line is found with indent <= minimal indent of
         " changed block
         let min_indent = min(b:anyfold_ind_actual[changed[0]-1 : changed[1]-1])
+
+        " subtract one to make sure that new indent is applied to all lines of the
+        " current block
+        let min_indent = max([min_indent-1, 0])
 
         " find end of current block for updating contextual indents
         let curr_line = changed[1]
