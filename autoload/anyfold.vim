@@ -44,7 +44,7 @@ function anyfold#init() abort
     " Set folds if not in diff mode
     if !&diff
         setlocal foldmethod=expr
-        setlocal foldexpr=GetIndentFold(v:lnum)
+        setlocal foldexpr=b:anyfold_ind_buffer[v:lnum-1]
     endif
 
     " Fold display
@@ -206,7 +206,9 @@ function! s:InitIndentList() abort
     let b:anyfold_commentlines = s:MarkCommentLines(1, line('$'))
     let b:anyfold_ind_actual = s:ActualIndents(1, line('$'))
     let b:anyfold_ind_contextual = s:ContextualIndents(0, 1, line('$'), b:anyfold_ind_actual)
+    let b:anyfold_ind_buffer = s:BufferIndents(1, line('$'))
 
+    lockvar! b:anyfold_ind_buffer
     lockvar! b:anyfold_ind_actual
     lockvar! b:anyfold_commentlines
     lockvar! b:anyfold_ind_contextual
@@ -237,6 +239,19 @@ function! s:LineIndent(lnum) abort
     else
         return max([prev_indent,next_indent])
     endif
+endfunction
+
+"----------------------------------------------------------------------------/
+" buffer for indents used in foldexpr
+"----------------------------------------------------------------------------/
+function! s:BufferIndents(line_start, line_end) abort
+    let ind_list = []
+    let curr_line = a:line_start
+    while curr_line <= a:line_end
+        let ind_list += [s:GetIndentFold(curr_line)]
+        let curr_line += 1
+    endwhile
+    return ind_list
 endfunction
 
 "----------------------------------------------------------------------------/
@@ -281,8 +296,8 @@ endfunction
 "----------------------------------------------------------------------------/
 " fold expression
 "----------------------------------------------------------------------------/
-function! GetIndentFold(lnum) abort
-
+function! s:GetIndentFold(lnum) abort
+    " TODO: store IndentFolds in array s.t. no work to be done here!
     if s:IsComment(a:lnum) && (s:IsComment(a:lnum-1) || s:IsComment(a:lnum+1))
         if g:anyfold_fold_comments
             " introduce artifical fold for docuboxes
@@ -366,9 +381,11 @@ function! s:ReloadFolds(lnum) abort
 
     unlockvar! b:anyfold_ind_actual
     unlockvar! b:anyfold_ind_contextual
+    unlockvar! b:anyfold_ind_buffer
 
     let b:anyfold_ind_actual = s:ExtendLineList(b:anyfold_ind_actual, changed[0], changed[1])
     let b:anyfold_ind_contextual = s:ExtendLineList(b:anyfold_ind_contextual, changed[0], changed[1])
+    let b:anyfold_ind_buffer = s:ExtendLineList(b:anyfold_ind_buffer, changed[0], changed[1])
 
     " partially update comments
     if g:anyfold_identify_comments
@@ -438,12 +455,15 @@ function! s:ReloadFolds(lnum) abort
         let b:anyfold_ind_contextual[changed_block[0]-1 : changed_block[1]-1] =
                     \ s:ContextualIndents(init_ind, changed_block[0], changed_block[1],
                     \ b:anyfold_ind_actual[changed_block[0]-1:changed_block[1]-1])
+
+        let b:anyfold_ind_buffer[changed_block[0]-1 : changed_block[1]-1] = s:BufferIndents(changed_block[0], changed_block[1])
     endif
 
     lockvar! b:anyfold_ind_actual
     lockvar! b:anyfold_ind_contextual
+    lockvar! b:anyfold_ind_buffer
 
-    setlocal foldexpr=GetIndentFold(v:lnum)
+    setlocal foldexpr=b:anyfold_ind_buffer[v:lnum-1]
 
 endfunction
 
