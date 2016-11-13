@@ -379,27 +379,11 @@ function! s:ReloadFolds(lnum) abort
         " partially update actual indent
         let b:anyfold_ind_actual[changed[0]-1 : changed[1]-1] = s:ActualIndents(changed[0], changed[1])
 
-        " find beginning of current code block for updating contextual indents
+        " find end of current code block for updating contextual indents
         " 1) find minimal indent present in changed block
-        " 2) move up until line is found with indent <= minimal indent of
+        " 2) move down until line is found with indent <= minimal indent of
         " changed block
         let min_indent = min(b:anyfold_ind_actual[changed[0]-1 : changed[1]-1])
-
-        let curr_line = changed[0]
-        let block_start_found = 0
-        while !block_start_found
-            if curr_line > 1
-                let curr_line += -1
-            endif
-            if b:anyfold_ind_actual[curr_line-1] <= min_indent
-                let block_start_found = 1
-            endif
-
-            if curr_line == 1 && !block_start_found
-                let block_start_found = 1
-            endif
-        endwhile
-        let changed_block_start = curr_line
 
         " find end of current block for updating contextual indents
         let curr_line = changed[1]
@@ -417,6 +401,26 @@ function! s:ReloadFolds(lnum) abort
             endif
         endwhile
         let changed_block_end = curr_line
+
+        " find beginning of current block, now minimal indent is indent of
+        " last line of block
+        let min_indent = min([b:anyfold_ind_actual[curr_line-1], min_indent])
+
+        let curr_line = changed[0]
+        let block_start_found = 0
+        while !block_start_found
+            if curr_line > 1
+                let curr_line += -1
+            endif
+            if b:anyfold_ind_actual[curr_line-1] <= min_indent
+                let block_start_found = 1
+            endif
+
+            if curr_line == 1 && !block_start_found
+                let block_start_found = 1
+            endif
+        endwhile
+        let changed_block_start = curr_line
 
         let changed_block = [changed_block_start, changed_block_end]
 
