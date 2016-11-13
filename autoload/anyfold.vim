@@ -203,14 +203,17 @@ endfunction
 
 function! s:InitIndentList() abort
 
-    let b:anyfold_commentlines = s:MarkCommentLines(1, line('$'))
+    if g:anyfold_identify_comments
+        let b:anyfold_commentlines = s:MarkCommentLines(1, line('$'))
+        lockvar! b:anyfold_commentlines
+    endif
+
     let b:anyfold_ind_actual = s:ActualIndents(1, line('$'))
     let b:anyfold_ind_contextual = s:ContextualIndents(0, 1, line('$'), b:anyfold_ind_actual)
     let b:anyfold_ind_buffer = s:BufferIndents(1, line('$'))
 
     lockvar! b:anyfold_ind_buffer
     lockvar! b:anyfold_ind_actual
-    lockvar! b:anyfold_commentlines
     lockvar! b:anyfold_ind_contextual
 endfunction
 
@@ -297,7 +300,6 @@ endfunction
 " fold expression
 "----------------------------------------------------------------------------/
 function! s:GetIndentFold(lnum) abort
-    " TODO: store IndentFolds in array s.t. no work to be done here!
     if s:IsComment(a:lnum) && (s:IsComment(a:lnum-1) || s:IsComment(a:lnum+1))
         if g:anyfold_fold_comments
             " introduce artifical fold for docuboxes
@@ -613,7 +615,8 @@ endfunction
 "----------------------------------------------------------------------------/
 function! s:echoIndents(mode) abort
     if a:mode == 1
-        echom b:anyfold_commentlines[line('.')-1]
+        echom s:IsComment(line('.'))
+        "echom b:anyfold_commentlines[line('.')-1]
     elseif a:mode == 2
         echom b:anyfold_ind_actual[line('.')-1]
     elseif a:mode == 3
