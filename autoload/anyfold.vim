@@ -363,29 +363,8 @@ endfunction
 "----------------------------------------------------------------------------/
 function! s:ReloadFolds(lnum) abort
 
-    let delta_lines = line('$') - len(b:anyfold_ind_actual)
-
-    " get first and last line of previously changed block
-    let changed_start = s:PrevNonBlankLine(getpos("'[")[1])
-    let changed_end = s:NextNonBlankLine(getpos("']")[1])
-    if changed_start == 0
-        let changed_start = 1
-    endif
-    if changed_end == -1
-        let changed_end = line('$')
-    endif
-
-    let changed = [changed_start, changed_end]
-
+    let changed = [getpos("'[")[1], getpos("']")[1]]
     let changed_lines = changed[1] - changed[0] + 1
-
-    unlockvar! b:anyfold_ind_actual
-    unlockvar! b:anyfold_ind_contextual
-    unlockvar! b:anyfold_ind_buffer
-
-    let b:anyfold_ind_actual = s:ExtendLineList(b:anyfold_ind_actual, changed[0], changed[1])
-    let b:anyfold_ind_contextual = s:ExtendLineList(b:anyfold_ind_contextual, changed[0], changed[1])
-    let b:anyfold_ind_buffer = s:ExtendLineList(b:anyfold_ind_buffer, changed[0], changed[1])
 
     " partially update comments
     if g:anyfold_identify_comments
@@ -396,6 +375,28 @@ function! s:ReloadFolds(lnum) abort
         endif
         lockvar! b:anyfold_commentlines
     endif
+
+    let delta_lines = line('$') - len(b:anyfold_ind_actual)
+
+    " get first and last line of previously changed block
+    let changed[0] = s:PrevNonBlankLine(changed[0])
+    let changed[1] = s:NextNonBlankLine(changed[1])
+    if changed[0] == 0
+        let changed[0] = 1
+    endif
+    if changed[1] == -1
+        let changed[1] = line('$')
+    endif
+    let changed_lines = changed[1] - changed[0] + 1
+
+    unlockvar! b:anyfold_ind_actual
+    unlockvar! b:anyfold_ind_contextual
+    unlockvar! b:anyfold_ind_buffer
+
+    let b:anyfold_ind_actual = s:ExtendLineList(b:anyfold_ind_actual, changed[0], changed[1])
+    let b:anyfold_ind_contextual = s:ExtendLineList(b:anyfold_ind_contextual, changed[0], changed[1])
+    let b:anyfold_ind_buffer = s:ExtendLineList(b:anyfold_ind_buffer, changed[0], changed[1])
+
 
     if changed_lines > 0
 
