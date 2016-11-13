@@ -24,7 +24,8 @@ each line followed by a hanging indent starts a new fold. A fold is closed by
 the next line with the same indent as the first line of the fold. The actual
 indents present in a file are carefully postprocessed to ensure that every fold
 contain exactly one logical block of code. AnyFold can handle many corner cases
-such as comments, empty lines and varying indentation widths.
+such as comments, empty lines and varying indentation widths. A fast fold update
+mechanism makes sure that folds are in sync with buffer.
 
 ==============================================================================
 2. Usage                                                         *AnyFoldUsage*

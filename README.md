@@ -7,10 +7,11 @@ Generic folding mechanism and motion based on indentation. Fold anything that is
 
 This Vim plugin comes with the following features:
 * Folding mechanism based on indented blocks that has a very intuitive and predictable behaviour (see examples below).
-* Results comparable to syntax aware folding methods but generic algorithm that does not rely on language specific rules.
+* Results comparable to syntax aware folding methods but fast and generic algorithm that does not rely on language specific rules.
 * Works out of the box for any filetypes, optimal results for all indented languages (including properly indented curly brace languages).
 * Shortcuts to navigate to beginning / end of a block and to previous / next indented block.
 * Can handle corner cases with ease (comments, varying indentation widths, line breaks).
+* Fast update mechanism that keeps folds in sync with buffer.
 
 It has the following shortcomings:
 * Can **not** correctly fold mismatched indentation and thus should only be used together with disciplined programming style (or in combination with Vim's `equalprg` autoindent feature).
