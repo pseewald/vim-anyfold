@@ -15,7 +15,6 @@ This Vim plugin comes with the following features:
 
 It has the following shortcomings:
 * Can **not** correctly fold mismatched indentation and thus should only be used together with disciplined programming style (or in combination with Vim's `equalprg` autoindent feature).
-* Indent based text objects not implemented - for that I recommend [vim-indent-object](https://github.com/michaeljsmith/vim-indent-object).
 
 
 ## Examples
@@ -106,6 +105,13 @@ Option | Values | Default value |  Description
 `anyfold_identify_comments` | 0, 1 | 1 | Identify (and ignore) comment lines
 `anyfold_fold_comments` | 0, 1 | 0 | Fold multiline comments
 `anyfold_fold_toplevel` | 0, 1 | 0 | Fold subsequent unindented lines
+
+
+## Complementary plugins
+
+Here is a small list of plugins that I find very useful in combination with vim-anyfold:
+* Cycle folds with one key, much more efficient than Vim's built-in folding commands: [vim-fold-cycle](https://github.com/arecarn/vim-fold-cycle)
+* Indent based text objects are not (yet) implemented in vim-anyfold, but this plugin works fine (even though blocks are defined in a slightly different way): [vim-indent-object](https://github.com/michaeljsmith/vim-indent-object)
 
 
 ## Acknowledgements
