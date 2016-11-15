@@ -366,6 +366,24 @@ endfunction
 function! s:ReloadFolds(lnum) abort
 
     let changed = [getpos("'[")[1], getpos("']")[1]]
+
+    let delta_lines = line('$') - len(b:anyfold_ind_actual)
+
+    if delta_lines == 0
+        let indents_same = 1
+        let curr_line = changed[0]
+        while curr_line <= changed[1]
+            if s:LineIndent(curr_line) != b:anyfold_ind_actual[curr_line - 1]
+                let indents_same = 0
+                break
+            endif
+            let curr_line += 1
+        endwhile
+        if indents_same
+            return
+        endif
+    endif
+
     let changed_lines = changed[1] - changed[0] + 1
 
     " partially update comments
@@ -378,7 +396,6 @@ function! s:ReloadFolds(lnum) abort
         lockvar! b:anyfold_commentlines
     endif
 
-    let delta_lines = line('$') - len(b:anyfold_ind_actual)
 
     " get first and last line of previously changed block
     let changed[0] = s:PrevNonBlankLine(changed[0])
