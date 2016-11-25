@@ -91,7 +91,7 @@ function! anyfold#init() abort
                     \ :call <SID>EchoIndents(3)<cr>
     endif
 
-    silent doautocmd User AnyFoldLoaded
+    silent doautocmd User anyfoldLoaded
 endfunction
 
 "----------------------------------------------------------------------------/

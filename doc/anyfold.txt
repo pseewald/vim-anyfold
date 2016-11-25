@@ -41,10 +41,11 @@ anyfold needs to be activated by adding one line to your vimrc:
 For dealing with folds in general, see |fold-commands|, |fold-options| and
 |fold-behavior|. Additionally, anyfold defines the following mappings:
 
-    [[          Move to the beginning of the current block.      *anyfoldMotion*
-    ]]          Move to the end of the current block.
-    ]k          Move to the end of the previous block.
-    [j          Move to the beginning of the next block.
+                                                                *anyfoldMotion*
+    [[          Move to the beginning of the current block.          *[[*
+    ]]          Move to the end of the current block.                *]]*
+    ]k          Move to the end of the previous block.               *]k*
+    [j          Move to the beginning of the next block.             *[j*
 
 When a count is used, repeats the command [count] times. Commands can be used
 after an operator.
