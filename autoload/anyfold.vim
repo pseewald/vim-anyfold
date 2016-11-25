@@ -365,7 +365,12 @@ endfunction
 "----------------------------------------------------------------------------/
 function! s:ReloadFolds(lnum) abort
 
-    let changed = [getpos("'[")[1], getpos("']")[1]]
+    let changed_start = getpos("'[")[1]
+
+    " workaround for vim bug
+    let changed_end = min([getpos("']")[1], line('$')])
+
+    let changed = [changed_start, changed_end]
 
     let delta_lines = line('$') - len(b:anyfold_ind_actual)
 
