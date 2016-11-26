@@ -372,8 +372,20 @@ function! s:ReloadFolds(lnum) abort
 
     let changed = [changed_start, changed_end]
 
+    let changed_lines = changed[1] - changed[0] + 1
     let delta_lines = line('$') - len(b:anyfold_ind_actual)
 
+    " partially update comments
+    if g:anyfold_identify_comments
+        unlockvar! b:anyfold_commentlines
+        let b:anyfold_commentlines = s:ExtendLineList(b:anyfold_commentlines, changed[0], changed[1])
+        if changed_lines > 0
+            let b:anyfold_commentlines[changed[0]-1 : changed[1]-1] = s:MarkCommentLines(changed[0], changed[1])
+        endif
+        lockvar! b:anyfold_commentlines
+    endif
+
+    " if number of lines has not changed and indents are the same, skip update
     if delta_lines == 0
         let indents_same = 1
         let curr_line = changed[0]
@@ -388,19 +400,6 @@ function! s:ReloadFolds(lnum) abort
             return
         endif
     endif
-
-    let changed_lines = changed[1] - changed[0] + 1
-
-    " partially update comments
-    if g:anyfold_identify_comments
-        unlockvar! b:anyfold_commentlines
-        let b:anyfold_commentlines = s:ExtendLineList(b:anyfold_commentlines, changed[0], changed[1])
-        if changed_lines > 0
-            let b:anyfold_commentlines[changed[0]-1 : changed[1]-1] = s:MarkCommentLines(changed[0], changed[1])
-        endif
-        lockvar! b:anyfold_commentlines
-    endif
-
 
     " get first and last line of previously changed block
     let changed[0] = s:PrevNonBlankLine(changed[0])
@@ -638,7 +637,6 @@ endfunction
 function! s:EchoIndents(mode) abort
     if a:mode == 1
         echom s:IsComment(line('.'))
-        "echom b:anyfold_commentlines[line('.')-1]
     elseif a:mode == 2
         echom b:anyfold_ind_actual[line('.')-1]
     elseif a:mode == 3
