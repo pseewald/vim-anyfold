@@ -3,10 +3,4 @@ if exists("b:loaded_anyfold")
 endif
 let b:loaded_anyfold = 1
 
-if !exists("g:anyfold_activate")
-    finish
-elseif !g:anyfold_activate
-    finish
-endif
-
 au CursorMoved * call anyfold#init()

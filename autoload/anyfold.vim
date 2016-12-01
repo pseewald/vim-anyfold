@@ -3,6 +3,12 @@
 "----------------------------------------------------------------------------/
 function! anyfold#init() abort
 
+    if !exists("g:anyfold_activate")
+        return
+    elseif !g:anyfold_activate
+        return
+    endif
+
     " make sure initialisation only happens once
     if exists("b:anyfold_initialised")
         return
