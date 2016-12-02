@@ -65,7 +65,7 @@ hi Folded term=NONE cterm=NONE
     Activate anyfold for a selected \<filetype\> only with
 
     ```vim
-    autocmd Filetype <filetype> let anyfold_activate=1
+    autocmd Filetype <filetype> let b:anyfold_activate=1
     ```
 2. *Supported folding commands:* anyfold uses `foldmethod=expr` to define folds. Thus all commands that work with expression folding are supported.
 3. *Fold display:* anyfold's minimalistic display of closed fold assumes that folds are highlighted by your color scheme. If that is not the case, consider installing a suitable color scheme or highlight folds yourself by a command similar to

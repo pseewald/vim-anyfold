@@ -3,9 +3,13 @@
 "----------------------------------------------------------------------------/
 function! anyfold#init() abort
 
-    if !exists("g:anyfold_activate")
+    if exists("g:anyfold_activate")
+        let b:anyfold_activate = g:anyfold_activate
+    endif
+
+    if !exists("b:anyfold_activate")
         return
-    elseif !g:anyfold_activate
+    elseif !b:anyfold_activate
         return
     endif
 
@@ -40,9 +44,6 @@ function! anyfold#init() abort
         let g:anyfold_identify_comments = 1
     endif
 
-    " Remember number of lines to check if folds need to be updated
-    let b:anyfold_numlines = line('$')
-
     " Create list with indents / foldlevels
 
     call s:InitIndentList()
@@ -59,7 +60,7 @@ function! anyfold#init() abort
     endif
 
     " folds are always updated when buffer has changed
-    autocmd TextChanged * :call s:ReloadFolds(line('.'))
+    autocmd TextChanged <buffer> :call s:ReloadFolds(line('.'))
 
     if g:anyfold_motion
         noremap <script> <buffer> <silent> ]]
@@ -371,15 +372,27 @@ endfunction
 "----------------------------------------------------------------------------/
 function! s:ReloadFolds(lnum) abort
 
-    let changed_start = getpos("'[")[1]
+    " many of the precautions taken are necessary because the marks of
+    " previously changed text '[ & '] are not always reliable, for instance if
+    " text is inserted by a script. There may be vim bugs such as
+    " vim/vim#1281.
 
-    " workaround for vim bug
+    let changed_start = min([getpos("'[")[1], line('$')])
     let changed_end = min([getpos("']")[1], line('$')])
 
-    let changed = [changed_start, changed_end]
+    let changed_tmp = [changed_start, changed_end]
+    let changed = [min(changed_tmp), max(changed_tmp)]
 
     let changed_lines = changed[1] - changed[0] + 1
     let delta_lines = line('$') - len(b:anyfold_ind_actual)
+
+    " if number of changed lines smaller than number of added / removed lines,
+    " something went wrong and we mark all lines as changed.
+    if changed_lines < delta_lines
+        let changed[0] = 1
+        let changed[1] = line('$')
+        let changed_lines = changed[1] - changed[0] + 1
+    endif
 
     " partially update comments
     if g:anyfold_identify_comments

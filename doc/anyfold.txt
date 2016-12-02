@@ -36,7 +36,7 @@ anyfold needs to be activated by adding one line to your vimrc:
     let g:anyfold_activate=1
 
 * anyfold active for a specific filetype
-    autocmd Filetype <your-filetype> let g:anyfold_activate=1
+    autocmd Filetype <your-filetype> let b:anyfold_activate=1
 
 For dealing with folds in general, see |fold-commands|, |fold-options| and
 |fold-behavior|. Additionally, anyfold defines the following mappings:
