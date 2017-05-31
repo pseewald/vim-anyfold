@@ -20,6 +20,11 @@ function! anyfold#init() abort
         let b:anyfold_initialised = 1
     endif
 
+    let b:anyfold_disable = &diff
+    if b:anyfold_disable
+        return
+    endif
+
     " Options and defaults
     if !exists('g:_ANYFOLD_DEFAULTS')
         let g:_ANYFOLD_DEFAULTS = {
@@ -45,14 +50,11 @@ function! anyfold#init() abort
     endif
 
     " Create list with indents / foldlevels
-
     call s:InitIndentList()
 
-    " Set folds if not in diff mode
-    if !&diff
-        setlocal foldmethod=expr
-        setlocal foldexpr=b:anyfold_ind_buffer[v:lnum-1]
-    endif
+    " Set folds
+    setlocal foldmethod=expr
+    setlocal foldexpr=b:anyfold_ind_buffer[v:lnum-1]
 
     " Fold display
     if g:anyfold_fold_display
