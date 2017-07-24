@@ -62,7 +62,7 @@ function! anyfold#init() abort
     endif
 
     " folds are always updated when buffer has changed
-    autocmd TextChanged <buffer> :call s:ReloadFolds(line('.'))
+    autocmd TextChanged,InsertLeave <buffer> :call s:ReloadFolds()
 
     if g:anyfold_motion
         noremap <script> <buffer> <silent> ]]
@@ -372,7 +372,7 @@ endfunction
 " Update folds
 " Only lines that have been changed are updated
 "----------------------------------------------------------------------------/
-function! s:ReloadFolds(lnum) abort
+function! s:ReloadFolds() abort
 
     " many of the precautions taken are necessary because the marks of
     " previously changed text '[ & '] are not always reliable, for instance if
