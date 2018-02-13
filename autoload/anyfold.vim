@@ -51,7 +51,7 @@ function! anyfold#init() abort
 
     " Option dependencies
     if g:anyfold_fold_comments
-        let g:anyfold_identify_comments = 1
+        let g:anyfold_identify_comments = max([1, g:anyfold_identify_comments])
     endif
 
     " Create list with indents / foldlevels
@@ -111,17 +111,20 @@ endfunction
 "----------------------------------------------------------------------------/
 " Identify comment lines
 "----------------------------------------------------------------------------/
-function! s:MarkCommentLines(line_start, line_end) abort
+function! s:MarkCommentLines(line_start, line_end, force) abort
     let commentlines = []
     let curr_line = a:line_start
     while curr_line <= a:line_end
         " here we force identification of a comment line if it may belong to a
         " multiline comment (in this case we can not assume that it is
         " unindented)
-        if curr_line > a:line_start
-            let force = commentlines[-1]
-        else
-            let force = 1
+        let force = a:force
+        if force == 0
+            if curr_line > a:line_start
+                let force = commentlines[-1]
+            else
+                let force = 1
+            endif
         endif
         let commentlines += [0]
         if s:CommentLine(curr_line, force)
@@ -218,8 +221,9 @@ endfunction
 function! s:InitIndentList() abort
 
     if g:anyfold_identify_comments
+        let force = g:anyfold_identify_comments == 2
         unlockvar! b:anyfold_commentlines
-        let b:anyfold_commentlines = s:MarkCommentLines(1, line('$'))
+        let b:anyfold_commentlines = s:MarkCommentLines(1, line('$'), force)
         lockvar! b:anyfold_commentlines
     endif
 
@@ -407,10 +411,11 @@ function! s:ReloadFolds() abort
 
     " partially update comments
     if g:anyfold_identify_comments
+        let force = g:anyfold_identify_comments == 2
         unlockvar! b:anyfold_commentlines
         let b:anyfold_commentlines = s:ExtendLineList(b:anyfold_commentlines, changed[0], changed[1])
         if changed_lines > 0
-            let b:anyfold_commentlines[changed[0]-1 : changed[1]-1] = s:MarkCommentLines(changed[0], changed[1])
+            let b:anyfold_commentlines[changed[0]-1 : changed[1]-1] = s:MarkCommentLines(changed[0], changed[1], force)
         endif
         lockvar! b:anyfold_commentlines
     endif

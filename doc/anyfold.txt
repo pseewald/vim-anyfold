@@ -81,17 +81,18 @@ Option                      | Description
 ----------------------------------------------------------------------
 g:anyfold_fold_display      | Minimalistic display of closed folds
 g:anyfold_motion            | Map motion commands (|anyfoldMotion|)
-g:anyfold_identify_comments | Identify (and ignore) comment lines
+g:anyfold_identify_comments | Identify comment lines for better fold behavior
 g:anyfold_fold_comments     | Fold multiline comments
 g:anyfold_fold_toplevel     | Fold subsequent unindented lines
 
-Option                      | Type    | Default value               *anyfoldDefaults*
+Option                      | Type    | Default value | Explanation   *anyfoldDefaults*
 ----------------------------------------------------------------------
-g:anyfold_fold_display      | 0, 1    | 1 (= 'on')
-g:anyfold_motion            | 0, 1    | 1 (= 'on')
-g:anyfold_identify_comments | 0, 1    | 1 (= 'on')
-g:anyfold_fold_comments     | 0, 1    | 0 (= 'off')
-g:anyfold_fold_toplevel     | 0, 1    | 0 (= 'off')
+g:anyfold_fold_display      | 0, 1    | 1 (= 'on')    |
+g:anyfold_motion            | 0, 1    | 1 (= 'on')    |
+g:anyfold_identify_comments | 0, 1, 2 | 1 (= 'on')    | 1: unindented comments only.
+                            |         |               | 2: all comments.
+g:anyfold_fold_comments     | 0, 1    | 0 (= 'off')   |
+g:anyfold_fold_toplevel     | 0, 1    | 0 (= 'off')   |
 
                                                                 *anyfoldLoaded*
 For expert configuration, anyfold triggers an |autocmd-event| `anyfoldLoaded`

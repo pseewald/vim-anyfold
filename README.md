@@ -81,7 +81,13 @@ hi Folded term=NONE cterm=NONE
     ```
 
    which unfolds the line in which the cursor is located when opening a file.
-5. *Documentation:* For more detailed instructions and information, read the included vim doc `:h anyfold`.
+5. *Performance:* The main performance penalty comes from the identification of comment lines. Add
+    ```vim
+    let anyfold_identify_comments = 0
+    ```
+
+    to your vimrc if you experience that vim-anyfold is slow.
+6. *Documentation:* For more detailed instructions and information, read the included vim doc `:h anyfold`.
 
 
 ## Options
@@ -102,7 +108,7 @@ Option | Values | Default value |  Description
 ------ | -------------- | ------------- | ------------
 `anyfold_fold_display` | 0, 1 | 1 | Minimalistic display of closed folds
 `anyfold_motion` | 0, 1 | 1 | Map motion commands to `[[`, `]]`, `[j`, `]k`
-`anyfold_identify_comments` | 0, 1 | 1 | Identify (and ignore) comment lines
+`anyfold_identify_comments` | 0, 1, 2 | 1 | Identify comment lines for better fold behavior. 1: unindented comments only. 2: all comments.
 `anyfold_fold_comments` | 0, 1 | 0 | Fold multiline comments
 `anyfold_fold_toplevel` | 0, 1 | 0 | Fold subsequent unindented lines
 
