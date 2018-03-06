@@ -144,9 +144,8 @@ function! s:CommentLine(lnum, force) abort
     if indent(a:lnum) >= &sw && !a:force
         return 0
     else
-        let sID = synID(a:lnum,indent(a:lnum)+1, 1)
-        return synIDattr(synIDtrans(sID),"name") =~? 'comment\|preproc'
-                    \ || synIDattr(sID,"name") =~? 'string'
+        return synIDattr(synID(a:lnum,indent(a:lnum)+1,1),"name") =~? 'comment\|string'
+                    \ || getline(a:lnum)[0] == '#'
     endif
 endfunction
 
