@@ -87,7 +87,8 @@ hi Folded term=NONE cterm=NONE
     ```
 
     to your vimrc if you experience that vim-anyfold is slow.
-6. *Documentation:* For more detailed instructions and information, read the included vim doc `:h anyfold`.
+6. *Ignored lines*: sometimes unindented lines should not define a new fold, such as comments or preprocessor statements. If the default behaviour of vim-anyfold does not already take care of this, you can set `anyfold_comments` to a list of syntax items that should be ignored.
+7. *Documentation:* For more detailed instructions and information, read the included vim doc `:h anyfold`.
 
 
 ## Options
@@ -110,6 +111,7 @@ Option | Values | Default value |  Description
 `anyfold_motion` | 0, 1 | 1 | Map motion commands to `[[`, `]]`, `[j`, `]k`
 `anyfold_identify_comments` | 0, 1, 2 | 1 | Identify comment lines for better fold behavior. 1: unindented comments only. 2: all comments.
 `anyfold_fold_comments` | 0, 1 | 0 | Fold multiline comments
+`anyfold_comments` | list of strings | ['comment', 'string', 'preproc', 'include'] | names of syntax items that should be treated as comments
 `anyfold_fold_toplevel` | 0, 1 | 0 | Fold subsequent unindented lines
 
 

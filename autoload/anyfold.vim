@@ -35,6 +35,7 @@ function! anyfold#init() abort
         let g:_ANYFOLD_DEFAULTS = {
                     \ 'identify_comments':            1,
                     \ 'fold_comments':                0,
+                    \ 'comments':      ['comment', 'string', 'preproc', 'include'],
                     \ 'fold_toplevel':                0,
                     \ 'fold_display':                 1,
                     \ 'motion':                       1,
@@ -52,6 +53,11 @@ function! anyfold#init() abort
     " Option dependencies
     if g:anyfold_fold_comments
         let g:anyfold_identify_comments = max([1, g:anyfold_identify_comments])
+    endif
+
+    let s:comments_string = ""
+    if len(g:anyfold_comments) > 0
+        let s:comments_string = join(g:anyfold_comments, "\\|")
     endif
 
     " Create list with indents / foldlevels
@@ -141,11 +147,10 @@ endfunction
 " (or if force==1)
 "----------------------------------------------------------------------------/
 function! s:CommentLine(lnum, force) abort
-    if indent(a:lnum) >= &sw && !a:force
+    if (indent(a:lnum) >= &sw && !a:force) || len(s:comments_string) == 0
         return 0
     else
-        return synIDattr(synID(a:lnum,indent(a:lnum)+1,1),"name") =~? 'comment\|string'
-                    \ || getline(a:lnum)[0] == '#'
+        return synIDattr(synID(a:lnum,indent(a:lnum)+1,1),"name") =~? s:comments_string
     endif
 endfunction
 
