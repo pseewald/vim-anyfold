@@ -3,6 +3,7 @@ function! anyfold#reset() abort
         unlet b:anyfold_initialised
     endif
 endfunction
+
 "----------------------------------------------------------------------------/
 " Initialization: Activation of requested features
 "----------------------------------------------------------------------------/
@@ -171,17 +172,17 @@ endfunction
 
 "----------------------------------------------------------------------------/
 " Utility function to check if line is to be considered
-" Note: this implements good heuristics for braces
 "----------------------------------------------------------------------------/
 function! s:ConsiderLine(lnum) abort
     if getline(a:lnum) !~? '\v\S'
         " empty line
         return 0
-    elseif getline(a:lnum) =~? '^\s*\W\s*$'
-        " line containing brace only
+    elseif getline(a:lnum) =~? '^\W\+$'
+        " line containing braces or other non-word characters that will not
+        " define an indent
         return 0
     elseif s:IsComment(a:lnum)
-        " unindented comment line
+        " comment line
         return 0
     else
         return 1
@@ -247,15 +248,47 @@ endfunction
 "----------------------------------------------------------------------------/
 " get actual indents
 " don't depend on context
+" Note: this implements good heuristics also for braces
 "----------------------------------------------------------------------------/
 function! s:ActualIndents(line_start, line_end) abort
-    let ind_list = []
     let curr_line = a:line_start
-    while curr_line <= a:line_end
-        let ind_list += [s:LineIndent(curr_line)]
-        let curr_line += 1
+    let offset = curr_line
+
+    " need to start with a line that has an indent
+    while curr_line > 1 && s:ConsiderLine(curr_line) == 0
+        let curr_line -= 1
     endwhile
-    return ind_list
+    let offset -= curr_line
+
+    let ind_list = [indent(curr_line)]
+    while curr_line < a:line_end
+        let curr_line += 1
+        let prev_indent = ind_list[-1]
+        let next_indent = indent(s:NextNonBlankLine(curr_line))
+        if s:ConsiderLine(curr_line)
+            " non-empty lines that define an indent
+            let ind_list += [indent(curr_line)]
+        elseif getline(curr_line) =~? '^\s*{\W*$'
+            " line consisting of { brace: this increases indent level
+            let ind_list += [min([ind_list[-1] + shiftwidth(), next_indent])]
+        elseif getline(curr_line) =~? '^\s*}\W*$'
+            " line consisting of } brace: this has indent of line with matching {
+            let restore = winsaveview()
+            execute curr_line
+            normal! %
+            let br_open_pos = getpos('.')[1]
+            call winrestview(restore)
+            if br_open_pos < curr_line && br_open_pos >= a:line_start - offset
+                let ind_list += [ind_list[offset + br_open_pos - a:line_start]]
+            else
+                " in case matching { does not exist or is out of range
+                let ind_list += [max([prev_indent, next_indent])]
+            endif
+        else
+            let ind_list += [max([prev_indent, next_indent])]
+        endif
+    endwhile
+    return ind_list[offset : ]
 endfunction
 
 "----------------------------------------------------------------------------/
@@ -389,6 +422,8 @@ endfunction
 "----------------------------------------------------------------------------/
 " Update folds
 " Only lines that have been changed are updated
+" Note: update mechanism may not always update brace based folds since it
+" detects block to be updated based on indents.
 "----------------------------------------------------------------------------/
 function! s:ReloadFolds() abort
 
