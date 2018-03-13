@@ -74,21 +74,27 @@ hi Folded term=NONE cterm=NONE
     hi Folded term=underline
     ```
 
-4. *Customization:* For expert configuration, anyfold triggers an event `anyfoldLoaded` after initialisation. This enables user-defined startup steps such as
+4. *lines to ignore*: By default, anyfold uses the `foldignore` option to identify lines to ignore (such as comment lines and preprocessor statements). Vim`s default is `foldignore = #`. Lines starting with characters in `foldignore` will get their fold level from surrounding lines. If `anyfold_fold_comments = 1` these lines get their own folds. For instance, in order to ignore C++ style comments starting with `//` and preprocessor statements starting with `#`, set
+
+    ```vim
+    autocmd Filetype cpp set foldignore=#/
+    ```
+
+This approach is fast but does not work for e.g. C style multiline comments and Python doc strings. If you'd like anyfold to correctly ignore these lines, add
+
+    ```vim
+    let anyfold_identify_comments = 2
+    ```
+
+to your vimrc. Please note that this may considerably slow down your Vim performance (mostly when opening large files).
+5. *Customization:* For expert configuration, anyfold triggers an event `anyfoldLoaded` after initialisation. This enables user-defined startup steps such as
 
     ```vim
     autocmd User anyfoldLoaded normal zv
     ```
 
    which unfolds the line in which the cursor is located when opening a file.
-5. *Performance:* The main performance penalty comes from the identification of comment lines. Add
-    ```vim
-    let anyfold_identify_comments = 0
-    ```
-
-    to your vimrc if you experience that vim-anyfold is slow.
-6. *Ignored lines*: sometimes unindented lines should not define a new fold, such as comments or preprocessor statements. If the default behaviour of vim-anyfold does not already take care of this, you can set `anyfold_comments` to a list of syntax items that should be ignored.
-7. *Documentation:* For more detailed instructions and information, read the included vim doc `:h anyfold`.
+6. *Documentation:* For more detailed instructions and information, read the included vim doc `:h anyfold`.
 
 
 ## Options
@@ -109,9 +115,9 @@ Option | Values | Default value |  Description
 ------ | -------------- | ------------- | ------------
 `anyfold_fold_display` | 0, 1 | 1 | Minimalistic display of closed folds
 `anyfold_motion` | 0, 1 | 1 | Map motion commands to `[[`, `]]`, `[j`, `]k`
-`anyfold_identify_comments` | 0, 1, 2 | 1 | Identify comment lines for better fold behavior. 1: unindented comments only. 2: all comments.
+`anyfold_identify_comments` | 0, 1, 2 | 1 | Identify lines to ignore for better fold behavior. 1: use `foldignore`, 2: use `foldignore` and syntax (slow)
 `anyfold_fold_comments` | 0, 1 | 0 | Fold multiline comments
-`anyfold_comments` | list of strings | ['comment', 'string', 'preproc', 'include'] | names of syntax items that should be treated as comments
+`anyfold_comments` | list of strings | ['comment', 'string'] | names of syntax items that should be ignored. Only used if `anyfold_identify_comments = 2`.
 `anyfold_fold_toplevel` | 0, 1 | 0 | Fold subsequent unindented lines
 
 

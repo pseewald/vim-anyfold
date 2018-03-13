@@ -104,11 +104,11 @@ function! anyfold#init() abort
 
     " mappings for debugging
     if g:anyfold_debug
-        noremap <script> <buffer> <silent> <F10>
+        noremap <script> <buffer> <silent> <F8>
                     \ :call <SID>EchoIndents(1)<cr>
-        noremap <script> <buffer> <silent> <F11>
+        noremap <script> <buffer> <silent> <F9>
                     \ :call <SID>EchoIndents(2)<cr>
-        noremap <script> <buffer> <silent> <F12>
+        noremap <script> <buffer> <silent> <F10>
                     \ :call <SID>EchoIndents(3)<cr>
     endif
 
@@ -118,41 +118,47 @@ endfunction
 "----------------------------------------------------------------------------/
 " Identify comment lines
 "----------------------------------------------------------------------------/
-function! s:MarkCommentLines(line_start, line_end, force) abort
+function! s:MarkCommentLines(line_start, line_end) abort
     let commentlines = []
     let curr_line = a:line_start
     while curr_line <= a:line_end
-        " here we force identification of a comment line if it may belong to a
-        " multiline comment (in this case we can not assume that it is
-        " unindented)
-        let force = a:force
-        if force == 0
-            if curr_line > a:line_start
-                let force = commentlines[-1]
-            else
-                let force = 1
-            endif
-        endif
-        let commentlines += [0]
-        if s:CommentLine(curr_line, force)
-            let commentlines[-1] = 1
-        endif
+        let commentlines += [s:CommentLine(curr_line)]
         let curr_line += 1
     endwhile
     return commentlines
 endfunction
 
 "----------------------------------------------------------------------------/
-" Check if line is unindented comment or preprocessor statement
-" Note: synID is very slow, therefore we identify unindented comments only
-" (or if force==1)
+" Check if line is comment or preprocessor statement
 "----------------------------------------------------------------------------/
-function! s:CommentLine(lnum, force) abort
-    if (indent(a:lnum) >= &sw && !a:force) || len(s:comments_string) == 0
+function! s:CommentLine(lnum) abort
+    if getline(a:lnum) !~? '\v\S'
+        " empty line
         return 0
-    else
+    endif
+
+    if g:anyfold_identify_comments == 0
+        return 0
+    endif
+
+    if g:anyfold_identify_comments >= 1
+        " using foldignore option to detect comments
+        " note: this may not work for multiline comments
+        for char in split(&foldignore, '\zs')
+            if char ==? getline(a:lnum)[indent(a:lnum)]
+                return 1
+            endif
+        endfor
+    endif
+
+    if g:anyfold_identify_comments >= 2
+        " synID is very slow, therefore we only call this if user wants highest
+        " accuracy for comment identification
         return synIDattr(synID(a:lnum,indent(a:lnum)+1,1),"name") =~? s:comments_string
     endif
+
+    return 0
+
 endfunction
 
 "----------------------------------------------------------------------------/
@@ -227,9 +233,8 @@ endfunction
 function! s:InitIndentList() abort
 
     if g:anyfold_identify_comments
-        let force = g:anyfold_identify_comments == 2
         unlockvar! b:anyfold_commentlines
-        let b:anyfold_commentlines = s:MarkCommentLines(1, line('$'), force)
+        let b:anyfold_commentlines = s:MarkCommentLines(1, line('$'))
         lockvar! b:anyfold_commentlines
     endif
 
@@ -451,11 +456,10 @@ function! s:ReloadFolds() abort
 
     " partially update comments
     if g:anyfold_identify_comments
-        let force = g:anyfold_identify_comments == 2
         unlockvar! b:anyfold_commentlines
         let b:anyfold_commentlines = s:ExtendLineList(b:anyfold_commentlines, changed[0], changed[1])
         if changed_lines > 0
-            let b:anyfold_commentlines[changed[0]-1 : changed[1]-1] = s:MarkCommentLines(changed[0], changed[1], force)
+            let b:anyfold_commentlines[changed[0]-1 : changed[1]-1] = s:MarkCommentLines(changed[0], changed[1])
         endif
         lockvar! b:anyfold_commentlines
     endif

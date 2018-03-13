@@ -59,13 +59,18 @@ line in a fold.
 Since anyfold can not correctly fold mismatched indentation, auto-indenting
 is highly recommended. See |equalprg|.
 
-                                                              *anyfoldComments*
-If comments are left unindented, indent folding produces wrong results. In this
-case you need to set
-    let g:anyfold_identify_comments = 1
+                                                              *anyfoldIgnore*
+By default, anyfold uses the |foldignore| option to identify lines to ignore
+(such as comments and preprocessor statements). Lines starting with characters
+in |foldignore| will get their fold level from surrounding lines. If
+`g:anyfold_fold_comments=1` (see |anyfoldOptions|) these lines get their own
+folds.
 
-such that comments are identified and ignored. Note that this feature may lead
-to slow performance for large files.
+Note that |foldignore| can not identify multiline comments such as C style
+comments or Python doc strings. In order to ignore these cases using syntax
+identification, consider setting `g:anyfold_identify_comments` to 2 (see
+|anyfoldOptions|). Note that this feature may lead to slow performance for
+large files.
 
 ==============================================================================
 3. Configuration and Options                            *anyfoldConfiguration*
@@ -81,20 +86,21 @@ Option                      | Description
 ----------------------------------------------------------------------
 g:anyfold_fold_display      | Minimalistic display of closed folds
 g:anyfold_motion            | Map motion commands (|anyfoldMotion|)
-g:anyfold_identify_comments | Identify comment lines for better fold behavior
+g:anyfold_identify_comments | Identify lines to ignore for better fold behavior
 g:anyfold_fold_comments     | Fold multiline comments
-g:anyfold_comments          | names of syntax items that should be treated as comments
+g:anyfold_comments          | names of syntax items that should be ignored.
+                            | Only used if `anyfold_identify_comments=2`.
 g:anyfold_fold_toplevel     | Fold subsequent unindented lines
 
 Option                      | Type            | Default value | Explanation   *anyfoldDefaults*
 ----------------------------------------------------------------------
-g:anyfold_fold_display      | 0, 1            | 1 (= 'on')    |
-g:anyfold_motion            | 0, 1            | 1 (= 'on')    |
-g:anyfold_identify_comments | 0, 1, 2         | 1 (= 'on')    | 1: unindented comments only.
-                            |                 |               | 2: all comments.
-g:anyfold_fold_comments     | 0, 1            | 0 (= 'off')   |
-g:anyfold_comments          | list of strings | ['comment', 'string', 'preproc', 'include'] |
-g:anyfold_fold_toplevel     | 0, 1            | 0 (= 'off')   |
+g:anyfold_fold_display      | 0, 1            | 1 (= 'on')  |
+g:anyfold_motion            | 0, 1            | 1 (= 'on')  |
+g:anyfold_identify_comments | 0, 1, 2         | 1 (= 'on')  | 1: use |foldignore|
+                            |                 |             | 2: use |foldignore| and |synID()| (slow)
+g:anyfold_fold_comments     | 0, 1            | 0 (= 'off') |
+g:anyfold_comments          | list of strings | ['comment', 'string'] |
+g:anyfold_fold_toplevel     | 0, 1            | 0 (= 'off') |
 
                                                                 *anyfoldLoaded*
 For expert configuration, anyfold triggers an |autocmd-event| `anyfoldLoaded`
