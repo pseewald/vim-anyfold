@@ -74,19 +74,17 @@ hi Folded term=NONE cterm=NONE
     hi Folded term=underline
     ```
 
-4. *lines to ignore*: By default, anyfold uses the `foldignore` option to identify lines to ignore (such as comment lines and preprocessor statements). Vim`s default is `foldignore = #`. Lines starting with characters in `foldignore` will get their fold level from surrounding lines. If `anyfold_fold_comments = 1` these lines get their own folds. For instance, in order to ignore C++ style comments starting with `//` and preprocessor statements starting with `#`, set
+4. *lines to ignore*: By default, anyfold uses the `foldignore` option to identify lines to ignore (such as comment lines and preprocessor statements). Vim's default is `foldignore = #`. Lines starting with characters in `foldignore` will get their fold level from surrounding lines. If `anyfold_fold_comments = 1` these lines get their own folds. For instance, in order to ignore C++ style comments starting with `//` and preprocessor statements starting with `#`, set
 
     ```vim
     autocmd Filetype cpp set foldignore=#/
     ```
-
-This approach is fast but does not work for e.g. C style multiline comments and Python doc strings. If you'd like anyfold to correctly ignore these lines, add
+    This approach is fast but does not work for e.g. C style multiline comments and Python doc strings. If you'd like anyfold to correctly ignore these lines, add
 
     ```vim
     let anyfold_identify_comments = 2
     ```
-
-to your vimrc. Please note that this may considerably slow down your Vim performance (mostly when opening large files).
+    to your vimrc. Please note that this may considerably slow down your Vim performance (mostly when opening large files).
 5. *Customization:* For expert configuration, anyfold triggers an event `anyfoldLoaded` after initialisation. This enables user-defined startup steps such as
 
     ```vim
