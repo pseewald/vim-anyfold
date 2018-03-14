@@ -82,7 +82,7 @@ hi Folded term=NONE cterm=NONE
     This approach is fast but does not work for e.g. C style multiline comments and Python doc strings. If you'd like anyfold to correctly ignore these lines, add
 
     ```vim
-    let anyfold_identify_comments = 2
+    let anyfold_identify_comments=2
     ```
     to your vimrc. Please note that this may considerably slow down your Vim performance (mostly when opening large files).
 5. *Customization:* For expert configuration, anyfold triggers an event `anyfoldLoaded` after initialisation. This enables user-defined startup steps such as
