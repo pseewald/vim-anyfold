@@ -129,4 +129,4 @@ Here is a small list of plugins that I find very useful in combination with vim-
 ## Acknowledgements
 
 I thank the following people for their contribution
-* Greg Sexton for allowing me to use [his function](http://www.gregsexton.org/2011/03/improving-the-text-displayed-in-a-fold/) for improved fold display.
+* Greg Sexton for allowing me to use [his function](http://gregsexton.org/2011/03/27/improving-the-text-displayed-in-a-vim-fold.html) for improved fold display.
