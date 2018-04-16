@@ -279,8 +279,8 @@ function! s:ActualIndents(line_start, line_end) abort
         elseif getline(curr_line) =~? '^\s*}\W*$'
             " line consisting of } brace: this has indent of line with matching {
             let restore = winsaveview()
-            execute curr_line
-            normal! %
+            keepjumps exe curr_line
+            keepjumps normal! %
             let br_open_pos = getpos('.')[1]
             call winrestview(restore)
             if br_open_pos < curr_line && br_open_pos >= a:line_start - offset
