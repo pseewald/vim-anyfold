@@ -17,6 +17,15 @@ It has the following shortcomings:
 * Can **not** correctly fold mismatched indentation and thus should only be used together with disciplined programming style (or in combination with Vim's `equalprg` autoindent feature).
 
 
+## Advantages over foldmethod=indent
+
+* `foldmethod=indent` only works for indents that are a multiple of `shiftwidth` and thus fails for aligned code lines and inconsistent indentation. Vim-anyfold correctly defines folds for arbitrary indents.
+* vim-anyfold recognizes braces as part of indented blocks and correctly folds them. Vim-anyfold thus produces good folds not only for indented languages but also for e.g. C++ or Java.
+* vim-anyfold optionally folds multiline comments.
+
+Be aware that `vim-anyfold` is much slower than `foldmethod=indent` and can reduce Vim's responsiveness. This is noticeable only when editing large files.
+
+
 ## Examples
 
 ### Python
