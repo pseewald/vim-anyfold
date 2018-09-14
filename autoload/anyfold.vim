@@ -440,6 +440,10 @@ function! s:ReloadFolds() abort
     let changed_start = min([getpos("'[")[1], line('$')])
     let changed_end = min([getpos("']")[1], line('$')])
 
+    " fix that getpos(...) may evaluate to 0 in some versions of Vim
+    let changed_start = max([changed_start, 1])
+    let changed_end = max([changed_end, 1])
+
     let changed_tmp = [changed_start, changed_end]
     let changed = [min(changed_tmp), max(changed_tmp)]
 
