@@ -44,8 +44,8 @@ Note: this example is outdated since better defaults have been implemented for c
 Examples were recorded using
 
 ```vim
-let anyfold_activate=1
-let anyfold_fold_comments=1
+let g:anyfold_activate=1
+let g:anyfold_fold_comments=1
 set foldlevel=0
 colorscheme solarized
 hi Folded term=NONE cterm=NONE
@@ -60,7 +60,7 @@ hi Folded term=NONE cterm=NONE
     ```vim
     filetype plugin indent on
     syntax on
-    let anyfold_activate=1
+    let g:anyfold_activate=1
     set foldlevel=0
     ```
 
@@ -91,7 +91,7 @@ hi Folded term=NONE cterm=NONE
     This approach is fast but does not work for e.g. C style multiline comments and Python doc strings. If you'd like anyfold to correctly ignore these lines, add
 
     ```vim
-    let anyfold_identify_comments=2
+    let g:anyfold_identify_comments=2
     ```
     to your vimrc. Please note that this may considerably slow down your Vim performance (mostly when opening large files).
 5. *Customization:* For expert configuration, anyfold triggers an event `anyfoldLoaded` after initialisation. This enables user-defined startup steps such as
@@ -109,7 +109,7 @@ hi Folded term=NONE cterm=NONE
 All options can be either set globally
 
 ```vim
-let <option>=<value>
+let g:<option>=<value>
 ```
 
 or filetype specific
@@ -124,9 +124,10 @@ Option | Values | Default value |  Description
 `anyfold_motion` | 0, 1 | 1 | Map motion commands to `[[`, `]]`, `[j`, `]k`
 `anyfold_identify_comments` | 0, 1, 2 | 1 | Identify lines to ignore for better fold behavior. 1: use `foldignore`, 2: use `foldignore` and syntax (slow)
 `anyfold_fold_comments` | 0, 1 | 0 | Fold multiline comments
-`anyfold_comments` | list of strings | ['comment', 'string'] | names of syntax items that should be ignored. Only used if `anyfold_identify_comments = 2`.
+`anyfold_comments` | list of strings | ['comment', 'string'] | Names of syntax items that should be ignored. Only used if `anyfold_identify_comments = 2`.
 `anyfold_fold_toplevel` | 0, 1 | 0 | Fold subsequent unindented lines
-
+`anyfold_fold_size_str` | string | '%s lines' | Format of fold size string in minimalistic display
+`anyfold_fold_level_str` | string | ' + ' | Format of fold level string in minimalistic dispaly
 
 ## Complementary plugins
 

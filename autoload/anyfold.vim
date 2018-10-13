@@ -41,6 +41,8 @@ function! anyfold#init() abort
                     \ 'fold_display':                 1,
                     \ 'motion':                       1,
                     \ 'debug':                        0,
+                    \ 'fold_size_str':           '%s lines',
+                    \ 'fold_level_str':             ' + ',
                     \ }
         lockvar! g:_ANYFOLD_DEFAULTS
     endif
@@ -618,8 +620,8 @@ function! MinimalFoldText() abort
 
     let w = winwidth(0) - &foldcolumn - &number * &numberwidth
     let foldSize = 1 + v:foldend - v:foldstart
-    let foldSizeStr = " " . foldSize . " lines "
-    let foldLevelStr = repeat("  +  ", v:foldlevel)
+    let foldSizeStr = " " . substitute(g:anyfold_fold_size_str, "%s", string(foldSize), "g") . " "
+    let foldLevelStr = repeat(g:anyfold_fold_level_str, v:foldlevel)
     let lineCount = line("$")
     let expansionString = repeat(" ", w - strwidth(foldSizeStr.line.foldLevelStr))
     return line . expansionString . foldSizeStr . foldLevelStr
