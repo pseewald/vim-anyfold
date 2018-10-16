@@ -115,7 +115,7 @@ let g:<option>=<value>
 or filetype specific
 
 ```vim
-autocmd Filetype <filetype> let <option>=<value>
+autocmd Filetype <filetype> let g:<option>=<value>
 ```
 
 Option | Values | Default value |  Description
@@ -127,7 +127,7 @@ Option | Values | Default value |  Description
 `anyfold_comments` | list of strings | ['comment', 'string'] | Names of syntax items that should be ignored. Only used if `anyfold_identify_comments = 2`.
 `anyfold_fold_toplevel` | 0, 1 | 0 | Fold subsequent unindented lines
 `anyfold_fold_size_str` | string | '%s lines' | Format of fold size string in minimalistic display
-`anyfold_fold_level_str` | string | ' + ' | Format of fold level string in minimalistic dispaly
+`anyfold_fold_level_str` | string | ' + ' | Format of fold level string in minimalistic display
 
 ## Complementary plugins
 

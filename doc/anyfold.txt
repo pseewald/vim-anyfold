@@ -77,10 +77,10 @@ large files.
                                                              *anyfoldOptions*
 For more control over mappings and features, anyfold provides the following
 options. These can be set either globally
-    let <option>=<value>
+    let g:<option>=<value>
 
 or filetype specific
-    autocmd Filetype <filetype> let <option>=<value>
+    autocmd Filetype <filetype> let g:<option>=<value>
 
 Option                      | Description
 ----------------------------------------------------------------------
@@ -101,6 +101,8 @@ g:anyfold_identify_comments | 0, 1, 2         | 1 (= 'on')  | 1: use |foldignore
 g:anyfold_fold_comments     | 0, 1            | 0 (= 'off') |
 g:anyfold_comments          | list of strings | ['comment', 'string'] |
 g:anyfold_fold_toplevel     | 0, 1            | 0 (= 'off') |
+g:anyfold_fold_size_str     | string          | '%s lines'  | Format of fold size string in minimalistic display
+g:anyfold_fold_level_str    | string          | ' + '       | Format of fold level string in minimalistic display
 
                                                                 *anyfoldLoaded*
 For expert configuration, anyfold triggers an |autocmd-event| `anyfoldLoaded`
