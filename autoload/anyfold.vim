@@ -68,7 +68,7 @@ function! anyfold#init() abort
 
     " Set folds
     setlocal foldmethod=expr
-    setlocal foldexpr=b:anyfold_ind_buffer[v:lnum-1]
+    set foldexpr=b:anyfold_ind_buffer[v:lnum-1]
 
     " Fold display
     if g:anyfold_fold_display
@@ -77,6 +77,10 @@ function! anyfold#init() abort
 
     " folds are always updated when buffer has changed
     autocmd TextChanged,InsertLeave <buffer> :call s:ReloadFolds()
+
+    " foldexpr is local to current window so it needs update when
+    " user enters another window
+    autocmd WinEnter <buffer> set foldexpr=b:anyfold_ind_buffer[v:lnum-1]
 
     if g:anyfold_motion
         noremap <script> <buffer> <silent> ]]
@@ -106,12 +110,14 @@ function! anyfold#init() abort
 
     " mappings for debugging
     if g:anyfold_debug
-        noremap <script> <buffer> <silent> <F8>
+        noremap <script> <buffer> <silent> <F7>
                     \ :call <SID>EchoIndents(1)<cr>
-        noremap <script> <buffer> <silent> <F9>
+        noremap <script> <buffer> <silent> <F8>
                     \ :call <SID>EchoIndents(2)<cr>
-        noremap <script> <buffer> <silent> <F10>
+        noremap <script> <buffer> <silent> <F9>
                     \ :call <SID>EchoIndents(3)<cr>
+        noremap <script> <buffer> <silent> <F10>
+                    \ :call <SID>EchoIndents(4)<cr>
     endif
 
     silent doautocmd User anyfoldLoaded
@@ -571,7 +577,7 @@ function! s:ReloadFolds() abort
     lockvar! b:anyfold_ind_contextual
     lockvar! b:anyfold_ind_buffer
 
-    setlocal foldexpr=b:anyfold_ind_buffer[v:lnum-1]
+    set foldexpr=b:anyfold_ind_buffer[v:lnum-1]
 
 endfunction
 
@@ -726,5 +732,7 @@ function! s:EchoIndents(mode) abort
         echom b:anyfold_ind_actual[line('.')-1]
     elseif a:mode == 3
         echom b:anyfold_ind_contextual[line('.')-1]
+    elseif a:mode == 4
+        echom b:anyfold_ind_buffer[line('.')-1]
     endif
 endfunction
