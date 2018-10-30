@@ -4,4 +4,4 @@ if exists("b:loaded_anyfold")
 endif
 let b:loaded_anyfold = 1
 
-au BufEnter * call anyfold#init()
+au BufNewFile,BufRead * call anyfold#init()
