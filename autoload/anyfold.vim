@@ -7,16 +7,18 @@ endfunction
 "----------------------------------------------------------------------------/
 " Initialization: Activation of requested features
 "----------------------------------------------------------------------------/
-function! anyfold#init() abort
+function! anyfold#init(force) abort
 
     if exists("g:anyfold_activate")
         let b:anyfold_activate = g:anyfold_activate
     endif
 
-    if !exists("b:anyfold_activate")
-        return
-    elseif !b:anyfold_activate
-        return
+    if !a:force
+        if !exists("b:anyfold_activate")
+            return
+        elseif !b:anyfold_activate
+            return
+        endif
     endif
 
     " make sure initialisation only happens once
@@ -25,6 +27,12 @@ function! anyfold#init() abort
     else
         let b:anyfold_initialised = 1
     endif
+
+    if exists("b:anyfold_activate")
+        echoerr "anyfold: 'let anyfold_activate=1' is deprecated, replace by 'AnyFoldActivate' (see ':h AnyFoldActivate')"
+    endif
+
+    let b:anyfold_loaded = 0
 
     let b:anyfold_disable = &diff || (&buftype ==# "terminal")
     if b:anyfold_disable
@@ -63,9 +71,6 @@ function! anyfold#init() abort
         let s:comments_string = join(g:anyfold_comments, "\\|")
     endif
 
-    " Create list with indents / foldlevels
-    call s:InitIndentList()
-
     " Set folds
     setlocal foldmethod=expr
     set foldexpr=b:anyfold_ind_buffer[v:lnum-1]
@@ -76,7 +81,7 @@ function! anyfold#init() abort
     endif
 
     " folds are always updated when buffer has changed
-    autocmd TextChanged,InsertLeave <buffer> :call s:ReloadFolds()
+    autocmd TextChanged,InsertLeave <buffer> call s:ReloadFolds()
 
     " foldexpr is local to current window so it needs update when
     " user enters another window
@@ -120,7 +125,6 @@ function! anyfold#init() abort
                     \ :call <SID>EchoIndents(4)<cr>
     endif
 
-    silent doautocmd User anyfoldLoaded
 endfunction
 
 "----------------------------------------------------------------------------/
@@ -444,6 +448,20 @@ function! s:ReloadFolds() abort
     " previously changed text '[ & '] are not always reliable, for instance if
     " text is inserted by a script. There may be vim bugs such as
     " vim/vim#1281.
+
+    if !b:anyfold_loaded
+        " initialize from scratch if ReloadFolds triggered for first time
+        call s:InitIndentList()
+        let b:anyfold_loaded = 1
+
+        " for some reason, need to redraw, otherwise vim will display
+        " beginning of file before jumping to last position
+        redraw
+
+        silent doautocmd User anyfoldLoaded
+
+        return
+    endif
 
     let changed_start = min([getpos("'[")[1], line('$')])
     let changed_end = min([getpos("']")[1], line('$')])

@@ -44,7 +44,7 @@ Note: this example is outdated since better defaults have been implemented for c
 Examples were recorded using
 
 ```vim
-let g:anyfold_activate=1
+autocmd Filetype * AnyFoldActivate
 let g:anyfold_fold_comments=1
 set foldlevel=0
 colorscheme solarized
@@ -60,30 +60,29 @@ hi Folded term=NONE cterm=NONE
     ```vim
     filetype plugin indent on
     syntax on
-    let g:anyfold_activate=1
-    set foldlevel=0
+
+    autocmd Filetype * AnyFoldActivate               " activate for all filetypes
+    " or
+    autocmd Filetype <your-filetype> AnyFoldActivate " activate for a specific filetype
+
+    set foldlevel=0  " close all folds
+    " or
+    set foldlevel=99 " Open all folds
     ```
 
-    Choose a higher foldlevel if you prefer to have folds open by default.
 3. Use Vim's fold commands `zo`, `zO`, `zc`, `za`, ... to fold / unfold folds (read `:h fold-commands` for more information). Use key combinations `[[` and `]]` to navigate to the beginning and end of the current open fold. Use `]k` and `[j` to navigate to the end of the previous block and to the beginning of the next block.
 
 
 ## Additional remarks
 
-1. *Filetype specific activation:*
-    Activate anyfold for a selected \<filetype\> only with
-
-    ```vim
-    autocmd Filetype <filetype> let b:anyfold_activate=1
-    ```
-2. *Supported folding commands:* anyfold uses `foldmethod=expr` to define folds. Thus all commands that work with expression folding are supported.
-3. *Fold display:* anyfold's minimalistic display of closed fold assumes that folds are highlighted by your color scheme. If that is not the case, consider installing a suitable color scheme or highlight folds yourself by a command similar to
+1. *Supported folding commands:* anyfold uses `foldmethod=expr` to define folds. Thus all commands that work with expression folding are supported.
+2. *Fold display:* anyfold's minimalistic display of closed fold assumes that folds are highlighted by your color scheme. If that is not the case, consider installing a suitable color scheme or highlight folds yourself by a command similar to
 
     ```vim
     hi Folded term=underline
     ```
 
-4. *Lines to ignore:* By default, anyfold uses the `foldignore` option to identify lines to ignore (such as comment lines and preprocessor statements). Vim's default is `foldignore = #`. Lines starting with characters in `foldignore` will get their fold level from surrounding lines. If `anyfold_fold_comments = 1` these lines get their own folds. For instance, in order to ignore C++ style comments starting with `//` and preprocessor statements starting with `#`, set
+3. *Lines to ignore:* By default, anyfold uses the `foldignore` option to identify lines to ignore (such as comment lines and preprocessor statements). Vim's default is `foldignore = #`. Lines starting with characters in `foldignore` will get their fold level from surrounding lines. If `anyfold_fold_comments = 1` these lines get their own folds. For instance, in order to ignore C++ style comments starting with `//` and preprocessor statements starting with `#`, set
 
     ```vim
     autocmd Filetype cpp set foldignore=#/
@@ -94,27 +93,35 @@ hi Folded term=NONE cterm=NONE
     let g:anyfold_identify_comments=2
     ```
     to your vimrc. Please note that this may considerably slow down your Vim performance (mostly when opening large files).
-5. *Large Files:* anyfold causes long load times on large files, significantly longer than plain indent folding. By adding the following to your vimrc (and replacing `<filetype>`), anyfold is not initialized for large files:
+4. *Large Files:* anyfold causes long load times on large files, significantly longer than plain indent folding. By adding the following to your vimrc (and replacing `<filetype>`), anyfold is not initialized for large files:
 
     ```vim
-    let g:LargeFile = 100000 " file is large if size greater than 100kB
+    " activate anyfold by default
+    augroup anyfold
+        autocmd!
+        autocmd Filetype <filetype> AnyFoldActivate
+    augroup END
+
+    " disable anyfold for large files
+    let g:LargeFile = 1000000 " file is large if size greater than 1MB
     autocmd BufReadPre,BufRead * let f=getfsize(expand("<afile>")) | if f > g:LargeFile || f == -2 | call LargeFile() | endif
     function LargeFile()
-        " prevent initialization of anyfold by overriding anyfold_activate
-        let b:anyfold_activate=0
+        augroup anyfold
+            autocmd! " remove AnyFoldActivate
+            autocmd Filetype fortran setlocal foldmethod=indent " fall back to indent folding
+        augroup END
     endfunction
 
-    autocmd Filetype <filetype> let b:anyfold_activate=1
-    autocmd Filetype <filetype> setlocal foldmethod=indent " fall back to indent folding if file is large
     ```
-6. *Customization:* For expert configuration, anyfold triggers an event `anyfoldLoaded` after initialisation. This enables user-defined startup steps such as
+
+5. *Customization:* For expert configuration, anyfold triggers an event `anyfoldLoaded` after initialisation. This enables user-defined startup steps such as
 
     ```vim
     autocmd User anyfoldLoaded normal zv
     ```
 
    which unfolds the line in which the cursor is located when opening a file.
-7. *Documentation:* For more detailed instructions and information, read the included vim doc `:h anyfold`.
+6. *Documentation:* For more detailed instructions and information, read the included vim doc `:h anyfold`.
 
 
 ## Options
