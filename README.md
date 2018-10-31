@@ -108,7 +108,7 @@ hi Folded term=NONE cterm=NONE
     function LargeFile()
         augroup anyfold
             autocmd! " remove AnyFoldActivate
-            autocmd Filetype fortran setlocal foldmethod=indent " fall back to indent folding
+            autocmd Filetype <filetype> setlocal foldmethod=indent " fall back to indent folding
         augroup END
     endfunction
 
