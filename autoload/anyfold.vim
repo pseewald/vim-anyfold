@@ -1,9 +1,3 @@
-function! anyfold#reset() abort
-    if exists("b:anyfold_initialised")
-        unlet b:anyfold_initialised
-    endif
-endfunction
-
 "----------------------------------------------------------------------------/
 " Initialization: Activation of requested features
 "----------------------------------------------------------------------------/
@@ -31,8 +25,6 @@ function! anyfold#init(force) abort
     if exists("b:anyfold_activate")
         echoerr "anyfold: 'let anyfold_activate=1' is deprecated, replace by 'AnyFoldActivate' (see ':h AnyFoldActivate')"
     endif
-
-    let b:anyfold_loaded = 0
 
     let b:anyfold_disable = &diff || (&buftype ==# "terminal")
     if b:anyfold_disable
@@ -71,21 +63,21 @@ function! anyfold#init(force) abort
         let s:comments_string = join(g:anyfold_comments, "\\|")
     endif
 
-    " Set folds
-    setlocal foldmethod=expr
-    set foldexpr=b:anyfold_ind_buffer[v:lnum-1]
-
-    " Fold display
-    if g:anyfold_fold_display
-        setlocal foldtext=MinimalFoldText()
-    endif
+    " calculate indents for first time
+    call s:InitIndentList()
 
     " folds are always updated when buffer has changed
     autocmd TextChanged,InsertLeave <buffer> call s:ReloadFolds()
 
-    " foldexpr is local to current window so it needs update when
-    " user enters another window
-    autocmd WinEnter <buffer> set foldexpr=b:anyfold_ind_buffer[v:lnum-1]
+    " set vim options
+    call anyfold#set_options()
+
+    " for some events, options need to be set again:
+    " - foldexpr is local to current window so it needs update when
+    "   user enters another window (WinEnter).
+    " - reset foldmethod that may be overwritten by syntax files (BufNewFile, BufRead)
+    "   (see #15, this replaces pr #16)
+    autocmd WinEnter,BufNewFile,BufRead <buffer> call anyfold#set_options()
 
     if g:anyfold_motion
         noremap <script> <buffer> <silent> ]]
@@ -123,6 +115,21 @@ function! anyfold#init(force) abort
                     \ :call <SID>EchoIndents(3)<cr>
         noremap <script> <buffer> <silent> <F10>
                     \ :call <SID>EchoIndents(4)<cr>
+    endif
+
+    silent doautocmd User anyfoldLoaded
+
+endfunction
+
+"----------------------------------------------------------------------------/
+" Set fold related vim options needed for anyfold
+"----------------------------------------------------------------------------/
+function! anyfold#set_options() abort
+
+    setlocal foldmethod=expr
+    set foldexpr=b:anyfold_ind_buffer[v:lnum-1]
+    if g:anyfold_fold_display
+        setlocal foldtext=MinimalFoldText()
     endif
 
 endfunction
@@ -245,16 +252,12 @@ endfunction
 function! s:InitIndentList() abort
 
     if g:anyfold_identify_comments
-        unlockvar! b:anyfold_commentlines
         let b:anyfold_commentlines = s:MarkCommentLines(1, line('$'))
         lockvar! b:anyfold_commentlines
     endif
 
-    unlockvar! b:anyfold_ind_actual
     let b:anyfold_ind_actual = s:ActualIndents(1, line('$'))
-    unlockvar! b:anyfold_ind_contextual
     let b:anyfold_ind_contextual = s:ContextualIndents(0, 1, line('$'), b:anyfold_ind_actual)
-    unlockvar! b:anyfold_ind_buffer
     let b:anyfold_ind_buffer = s:BufferIndents(1, line('$'))
 
     lockvar! b:anyfold_ind_buffer
@@ -448,20 +451,11 @@ function! s:ReloadFolds() abort
     " previously changed text '[ & '] are not always reliable, for instance if
     " text is inserted by a script. There may be vim bugs such as
     " vim/vim#1281.
+    "
 
-    if !b:anyfold_loaded
-        " initialize from scratch if ReloadFolds triggered for first time
-        call s:InitIndentList()
-        let b:anyfold_loaded = 1
-
-        " for some reason, need to redraw, otherwise vim will display
-        " beginning of file before jumping to last position
-        redraw
-
-        silent doautocmd User anyfoldLoaded
-
-        return
-    endif
+    " for some reason, need to redraw, otherwise vim will display
+    " beginning of file before jumping to last position
+    redraw
 
     let changed_start = min([getpos("'[")[1], line('$')])
     let changed_end = min([getpos("']")[1], line('$')])
