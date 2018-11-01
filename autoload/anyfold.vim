@@ -23,7 +23,11 @@ function! anyfold#init(force) abort
     endif
 
     if exists("b:anyfold_activate")
-        echoerr "anyfold: 'let anyfold_activate=1' is deprecated, replace by 'AnyFoldActivate' (see ':h AnyFoldActivate')"
+        echoerr "anyfold: 'let anyfold_activate=1' is deprecated, replace by command ':AnyFoldActivate' (see ':h AnyFoldActivate')"
+    endif
+
+    if exists("b:AnyFoldActivate") || exists("g:AnyFoldActivate")
+        echoerr "anyfold: 'let AnyFoldActivate=1' does not work, ':AnyFoldActivate' is a command! (see ':h AnyFoldActivate')"
     endif
 
     let b:anyfold_disable = &diff || (&buftype ==# "terminal")
