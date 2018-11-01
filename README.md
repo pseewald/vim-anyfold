@@ -3,6 +3,11 @@
 Generic folding mechanism and motion based on indentation. Fold anything that is structured into indented blocks. Quickly navigate between blocks.
 
 
+## Short Instructions
+
+Using this plugin is easy: Activate vim-anyfold by the command `:AnyFoldActivate` and deal with folds using Vim's built-in fold commands. Use key combinations `[[` and `]]` to navigate to the beginning and end of the current open fold. Use `]k` and `[j` to navigate to the end of the previous block and to the beginning of the next block. For more detailed documentation, read the included vim doc `:h anyfold` or continue reading.
+
+
 ## Introduction
 
 This Vim plugin comes with the following features:
@@ -58,8 +63,8 @@ hi Folded term=NONE cterm=NONE
 2. Add the following lines to your vimrc (if not already present).
 
     ```vim
-    filetype plugin indent on
-    syntax on
+    filetype plugin indent on " required
+    syntax on                 " required
 
     autocmd Filetype * AnyFoldActivate               " activate for all filetypes
     " or
@@ -69,6 +74,8 @@ hi Folded term=NONE cterm=NONE
     " or
     set foldlevel=99 " Open all folds
     ```
+
+If you prefer to not activate vim-anyfold automatically, you can always invoke this plugin manually inside vim by typing `:AnyFoldActivate`.
 
 3. Use Vim's fold commands `zo`, `zO`, `zc`, `za`, ... to fold / unfold folds (read `:h fold-commands` for more information). Use key combinations `[[` and `]]` to navigate to the beginning and end of the current open fold. Use `]k` and `[j` to navigate to the end of the previous block and to the beginning of the next block.
 

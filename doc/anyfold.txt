@@ -29,9 +29,13 @@ mechanism makes sure that folds are in sync with buffer.
 
 ==============================================================================
 2. Usage                                                         *anyfoldUsage*
+                                                                 *:AnyFoldActivate*
+This plugin needs to be activated by the command :AnyFoldActivate, otherwise it
+will do nothing.
 
-anyfold needs to be activated by adding one line to your vimrc:
-    autocmd Filetype <your-filetype> AnyFoldActivate           *AnyFoldActivate*
+To automatically activate vim-anyfold for a specific filetype, add the following
+line to vimrc:
+    autocmd Filetype <your-filetype> AnyFoldActivate
 
 For dealing with folds in general, see |fold-commands|, |fold-options| and
 |fold-behavior|. Additionally, anyfold defines the following mappings:
