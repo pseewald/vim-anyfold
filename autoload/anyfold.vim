@@ -30,8 +30,7 @@ function! anyfold#init(force) abort
         echoerr "anyfold: 'let AnyFoldActivate=1' does not work, ':AnyFoldActivate' is a command! (see ':h AnyFoldActivate')"
     endif
 
-    let b:anyfold_disable = &diff || (&buftype ==# "terminal")
-    if b:anyfold_disable
+    if s:AnyfoldDisable()
         return
     endif
 
@@ -129,6 +128,10 @@ endfunction
 " Set fold related vim options needed for anyfold
 "----------------------------------------------------------------------------/
 function! anyfold#set_options() abort
+
+    if s:AnyfoldDisable()
+        return
+    endif
 
     setlocal foldmethod=expr
     set foldexpr=b:anyfold_ind_buffer[v:lnum-1]
@@ -622,6 +625,20 @@ function! s:ExtendLineList(list, insert_start, insert_end) abort
         return repeat([0], nchanged)
     endif
 
+endfunction
+
+"----------------------------------------------------------------------------/
+" disable fold text and return whether anyfold should be disabled
+"----------------------------------------------------------------------------/
+function! s:AnyfoldDisable() abort
+    if &diff || (&buftype ==# "terminal")
+        if &foldtext=="MinimalFoldText()"
+            setlocal foldtext=foldtext() " reset foldtext to default
+        endif
+        return 1
+    else
+        return 0
+    endif
 endfunction
 
 "----------------------------------------------------------------------------/
