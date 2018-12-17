@@ -679,7 +679,7 @@ function! s:JumpFoldStart(visual, count1) abort
     while rep < a:count1
         let rep += 1
         if curr_line == 1
-            call cursor(1,1)
+            call s:CursorJump(1,1)
             return
         endif
 
@@ -698,7 +698,7 @@ function! s:JumpFoldStart(visual, count1) abort
         endwhile
     endwhile
 
-    call cursor(curr_line,1)
+    call s:CursorJump(curr_line,1)
 endfunction
 
 function! s:JumpFoldEnd(visual, count1) abort
@@ -711,7 +711,7 @@ function! s:JumpFoldEnd(visual, count1) abort
     while rep < a:count1
         let rep += 1
         if curr_line == line('$')
-            call cursor(line('$'),1)
+            call s:CursorJump(line('$'),1)
             return
         endif
 
@@ -730,7 +730,7 @@ function! s:JumpFoldEnd(visual, count1) abort
         endwhile
     endwhile
 
-    call cursor(curr_line,1)
+    call s:CursorJump(curr_line,1)
 endfunction
 
 function! s:JumpPrevFoldEnd(visual, count1) abort
@@ -753,6 +753,10 @@ function! s:JumpNextFoldStart(visual, count1) abort
         let rep += 1
         normal! zj
     endwhile
+endfunction
+
+function! s:CursorJump(lnum, col) abort
+    execute "normal " . a:lnum . "G" . a:col . "|"
 endfunction
 
 "----------------------------------------------------------------------------/
