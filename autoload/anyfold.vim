@@ -180,6 +180,9 @@ function! s:CommentLine(lnum) abort
     if g:anyfold_identify_comments >= 2
         " synID is very slow, therefore we only call this if user wants highest
         " accuracy for comment identification
+        if empty(s:comments_string)
+            return 0
+        endif
         return synIDattr(synID(a:lnum,indent(a:lnum)+1,1),"name") =~? s:comments_string
     endif
 
