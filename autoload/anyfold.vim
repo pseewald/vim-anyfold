@@ -1,33 +1,41 @@
 "----------------------------------------------------------------------------/
 " Initialization: Activation of requested features
 "----------------------------------------------------------------------------/
-function! anyfold#init(force) abort
-
-    if exists("g:anyfold_activate")
-        let b:anyfold_activate = g:anyfold_activate
-    endif
-
-    if !a:force
-        if !exists("b:anyfold_activate")
-            return
-        elseif !b:anyfold_activate
-            return
+function! anyfold#init(force, bang) abort
+    let anyfold_reinitializing = 0
+    if a:bang == 1
+        " skip double initialization guards
+        if exists("b:anyfold_initialised")
+            let anyfold_reinitializing = 1
         endif
-    endif
-
-    " make sure initialisation only happens once
-    if exists("b:anyfold_initialised")
-        return
-    else
         let b:anyfold_initialised = 1
-    endif
+    else
+        if exists("g:anyfold_activate")
+            let b:anyfold_activate = g:anyfold_activate
+        endif
 
-    if exists("b:anyfold_activate")
-        echoerr "anyfold: 'let anyfold_activate=1' is deprecated, replace by command ':AnyFoldActivate' (see ':h AnyFoldActivate')"
-    endif
+        if !a:force
+            if !exists("b:anyfold_activate")
+                return
+            elseif !b:anyfold_activate
+                return
+            endif
+        endif
 
-    if exists("b:AnyFoldActivate") || exists("g:AnyFoldActivate")
-        echoerr "anyfold: 'let AnyFoldActivate=1' does not work, ':AnyFoldActivate' is a command! (see ':h AnyFoldActivate')"
+        " make sure initialisation only happens once
+        if exists("b:anyfold_initialised")
+            return
+        else
+            let b:anyfold_initialised = 1
+        endif
+
+        if exists("b:anyfold_activate")
+            echoerr "anyfold: 'let anyfold_activate=1' is deprecated, replace by command ':AnyFoldActivate' (see ':h AnyFoldActivate')"
+        endif
+
+        if exists("b:AnyFoldActivate") || exists("g:AnyFoldActivate")
+            echoerr "anyfold: 'let AnyFoldActivate=1' does not work, ':AnyFoldActivate' is a command! (see ':h AnyFoldActivate')"
+        endif
     endif
 
     if s:AnyfoldDisable()
@@ -67,7 +75,9 @@ function! anyfold#init(force) abort
     endif
 
     " calculate indents for first time
-    call s:InitIndentList()
+    if !anyfold_reinitializing
+        call s:InitIndentList()
+    endif
 
     " folds are always updated when buffer has changed
     autocmd TextChanged,InsertLeave <buffer> call s:ReloadFolds()
