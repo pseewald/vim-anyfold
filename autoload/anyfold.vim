@@ -295,27 +295,35 @@ function! s:ActualIndents(line_start, line_end) abort
         let curr_line += 1
         let prev_indent = ind_list[-1]
         let next_indent = indent(s:NextNonBlankLine(curr_line))
-        if s:ConsiderLine(curr_line)
-            " non-empty lines that define an indent
-            let ind_list += [indent(curr_line)]
-        elseif getline(curr_line) =~? '^\s*{\W*$'
+        if getline(curr_line) =~? '^\s*{\W*$'
             " line consisting of { brace: this increases indent level
             let ind_list += [min([ind_list[-1] + shiftwidth(), next_indent])]
-        elseif getline(curr_line) =~? '^\s*}\W*$'
-            " line consisting of } brace: this has indent of line with matching {
-            let restore = winsaveview()
-            keepjumps exe curr_line
-            keepjumps normal! %
-            let br_open_pos = getpos('.')[1]
-            call winrestview(restore)
-            if br_open_pos < curr_line && br_open_pos >= a:line_start - offset
-                let ind_list += [ind_list[offset + br_open_pos - a:line_start]]
-            else
-                " in case matching { does not exist or is out of range
-                let ind_list += [max([prev_indent, next_indent])]
-            endif
         else
-            let ind_list += [max([prev_indent, next_indent])]
+            let cur_indent = indent(curr_line)
+            if cur_indent < prev_indent
+                let restore = winsaveview()
+                keepjumps exe curr_line
+                keepjumps normal %
+                let br_open_pos = getpos('.')[1]
+                call winrestview(restore)
+            else
+                let br_open_pos = curr_line
+            endif
+            if br_open_pos < curr_line && br_open_pos >= a:line_start - offset
+                " Found scope start
+                let ind_list += [ind_list[s:NextNonBlankLine(offset + br_open_pos - a:line_start)]]
+            else
+                if s:ConsiderLine(curr_line)
+                    " non-empty lines that define an indent
+                    let ind_list += [cur_indent]
+                elseif getline(curr_line) =~? '^\s*}\W*$'
+                    " line consisting of } brace: this has indent of line with matching {
+                    " in case matching { does not exist or is out of range
+                    let ind_list += [max([prev_indent, next_indent])]
+                else
+                    let ind_list += [max([prev_indent, next_indent])]
+                endif
+            endif
         endif
     endwhile
     return ind_list[offset : ]
