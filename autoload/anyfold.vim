@@ -311,7 +311,7 @@ function! s:ActualIndents(line_start, line_end) abort
             endif
             if br_open_pos < curr_line && br_open_pos >= a:line_start - offset
                 " Found scope start
-                let ind_list += [ind_list[s:NextNonBlankLine(offset + br_open_pos - a:line_start)]]
+                let ind_list += [ind_list[min([s:NextNonBlankLine(offset + br_open_pos - a:line_start), len(ind_list) - 1])]]
             else
                 if s:ConsiderLine(curr_line)
                     " non-empty lines that define an indent
